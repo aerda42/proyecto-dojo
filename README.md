@@ -1,1 +1,1 @@
-# proyecto-dojo
+# Proyecto Gym-Do
