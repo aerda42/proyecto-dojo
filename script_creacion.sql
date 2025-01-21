@@ -4,7 +4,6 @@ USE ProyectoDojo;
 
 
 -- eliminación tablas
-
 DROP TABLE IF EXISTS Pagos;
 DROP TABLE IF EXISTS InfosSanitarias;
 DROP TABLE IF EXISTS Anuncios;
@@ -21,7 +20,6 @@ DROP TABLE IF EXISTS Personas;
 
 
 -- creación tablas
-
 CREATE TABLE Personas (
     personaId INT PRIMARY KEY AUTO_INCREMENT,
     telefono INT,

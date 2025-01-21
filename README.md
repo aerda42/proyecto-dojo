@@ -150,230 +150,94 @@ sesión, alumno, asistencia (presente, ausente)
 
 #### R.N.01.1 Creación alumno
 Un alumno nuevo sólo podrá ser añadido al sistema si tiene todos los campos del formulario de inscripción completos, a excepción de:
-- número de contacto del alumno: obligatorio si el alumno es mayor de edad
-- correo electrónico del alumno: obligatorio si el alumno es mayor de edad
-- dni: obligatorio si el alumno tiene más de 14 años
-- información sanitaria de interés: opcional
-- razón de inscripción: opcional
-- nombre del tutor legal: opcional
-- apellidos del tutor legal: opcional
-- número de contacto del tutor legal: obligatorio si el alumno es menor de edad
-- correo electrónico del tutor legal: obligatorio si el alumno es menor de edad
-- correo electrónico alternativo: opcional
+ número de contacto del alumno: obligatorio si el alumno es mayor de edad,
+ correo electrónico del alumno: obligatorio si el alumno es mayor de edad,
+ dni: obligatorio si el alumno tiene más de 14 años,
+ información sanitaria de interés: opcional,
+ razón de inscripción: opcional,
+ nombre del tutor legal: opcional,
+ apellidos del tutor legal: opcional,
+ número de contacto del tutor legal: obligatorio si el alumno es menor de edad,
+ correo electrónico del tutor legal: obligatorio si el alumno es menor de edad,
+ correo electrónico alternativo: opcional
 
-PRUEBAS DE ACEPTACIÓN:
-1. alumno correcto, grupo disponible
-  - hay una lista con todos los alumnos
-  - se intenta añadir a la lista un alumno con: razonInscripcion='Motivo Personal', fechaNacimiento=1/1/2000, codigoFederativo=NULL, dni='12345678A', clausulaPDD=TRUE, domicilioId=1, personaId=1, tutorId=1,grupoIdEntreno=1,grupoIdEspera=NULL
-  - se comprueba que el alumno está en la lista
-2. alumno correcto, grupo completo
-  - hay una lista con todos los alumnos
-  - se intenta añadir a la lista un alumno con: nombre = John, apellidos = Doe, fecha de nacimiento = 1/1/2012, dirección = C/San Jacinto,2 , municipio = Sevilla, código postal = 41010, número de contacto del alumno = NULL, correo electrónico del alumno = NULL, grupo = G2, dni = NULL, información sanitaria de interés = NULL, razón de inscripción = NULL, nombre tutor legal = NULL, apellidos tutor legal = NULL, parentesco = NULL, número de contacto del tutor legal = 601234567, correo electrónico del tutor legal = micorreo@gmail.com, correo electrónico alternativo del tutor legal = NULL, cláusula de protección de datos = 1
-  - se comprueba que el alumno se ha añadido a la lista con: estado = activo
-  - hay una lista con todos los alumnos del grupo G2
-  - se comprueba que el alumno está en la lista del grupo G2
-  - hay una lista con todos los estados
-  - se intenta añadir un estado con: estado = activo, temporada, alumno
-  - se comprueba que el estado está en la lista
-2. alumno menor de edad olvida el número de contacto del tutor legal
-  - hay una lista con todos los alumnos
-  - se intenta añadir a la lista un alumno con: número de contacto del tutor legal = NULL
-  - se comprueba que el alumno no se ha añadido a la lista
-3. alumno menor de edad olvida el correo electrónico del tutor legal
-  - hay una lista con todos los alumnos
-  - se intenta añadir a la lista un alumno con: correo electrónico del tutor legal = NULL
-  - se comprueba que el alumno no se ha añadido a la lista
-4. alumno menor de 14 años intenta meter DNI 
-  - hay una lista con todos los alumnos
-  - se intenta añadir a la lista un alumno con: dni = 12345678A
-  - se comprueba que se ha añadido a la lista el alumno con campo de dni = NULL
-5. alumno mayor de 14 años olvida DNI
-  - hay una lista con todos los alumnos
-  - se intenta añadir a la lista un alumno con: dni = NULL
-  - se comprueba que el alumno no se ha añadido a la lista
-6. alumno mayor de edad olvida su número de contacto
-  - hay una lista con todos los alumnos
-  - se intenta añadir a la lista un alumno con: número de contacto del alumno = NULL
-  - se comprueba que el alumno no se ha añadido a la lista
-7. alumno mayor de edad olvida su correo electrónico
-  - hay una lista con todos los alumnos
-  - se intenta añadir a la lista un alumno con: correo electrónico del alumno = NULL
-  - se comprueba que el alumno no se ha añadido a la lista
-8. alumno olvida aceptar la cláusula de protección de datos
-  - hay una lista con todos los alumnos
-  - se intenta añadir a la lista un alumno con: cláusula de protección de datos = NULL
-  - se comprueba que el alumno no se ha añadido a la lista
-9. alumno duplicado
-  - hay una lista con todos los alumnos
-  - se añade un alumno a la lista
-  - se comprueba que el alumno se ha añadido a la lista
-  - se intenta añadir el mismo alumno a la lista: igual dni, nombre, y apellidos
-  - se comprueba que el alumno no se ha añadido a la lista
+- PRUEBAS DE ACEPTACIÓN:
+    - alumno correcto, grupo disponible: CORRECTO
+    - alumno correcto, grupo completo: FALLO
+    - alumno menor de edad olvida el número de contacto del tutor legal: FALLO
+    - alumno menor de edad olvida el correo electrónico del tutor legal: FALLO
+    - alumno menor de 14 años intenta meter DNI: CORRECTO (se guada como null)
+    - alumno mayor de 14 años olvida DNI: FALLO
+    - alumno mayor de edad olvida su número de contacto: FALLO
+    - alumno mayor de edad olvida su correo electrónico: FALLO
+    - alumno olvida aceptar la cláusula de protección de datos: FALLO
+    - alumno duplicado: FALLO
 
 #### R.N.01.2 Actualización alumno
 Un alumno sólo podrá ser actulizado en el sistema si tiene todos los campos del formulario de renovación completos.
 
-PRUEBAS DE ACEPTACIÓN:
-1. alumno correcto, grupo disponible
-  - hay una lista con todos los alumnos
-  - se comprueba que el alumno a modificar está en la lista
-  - se intenta actualizar un alumno con: ID federativo = null, grupo = G4
-  - se comprueba que el alumno está en la lista con: estado = activo, grupo = G4
-  - hay una lista con todos los alumnos del grupo G4
-  - se comprueba que el alumno está en lista
-  - hay una lista con todos los estados
-  - se intenta añadir un estado con: estado = activo, temporada, alumno
-  - se comprueba que el estado está en la lista
-2. alumno correcto, grupo completo
-  - hay una lista con todos los alumnos
-  - se comprueba que el alumno a modificar está en la lista
-  - se intenta actualizar un alumno con: ID federativo = null, grupo = G2
-  - se comprueba que el alumno está en la lista con: estado = activo, grupo = G2
-  - hay una lista con todos los alumnos del grupo G2
-  - se comprueba que el alumno no está en lista
-  - hay una lista con todos los estados
-  - se intenta añadir un estado con: estado = activo, temporada, alumno
-  - se comprueba que el estado está en la lista
-3. alumno olvida su identificador
-  - hay una lista con todos los alumnos
-  - se intenta añadir a la lista un alumno con: ID federativo = null
-  - se comprueba que no ha habido modificaciones en ningún alumno
+- PRUEBAS DE ACEPTACIÓN:
+    - alumno correcto, grupo disponible: CORRECTO
+    - alumno correcto, grupo completo: FALLO
+    - alumno olvida su identificador: FALLO
 
 #### R.N.01.3 Eliminación alumno
 Un alumno no podrá ser eliminado del sistema.
 
-PRUEBAS DE ACEPTACIÓN:
-- hay una lista con todos los alumnos
-- se intenta eliminar un alumno
-- se comprueba que el alumno sigue en la lista
+- PRUEBAS DE ACEPTACIÓN:
+    - se intenta eliminar: FALLO
 
 #### R.N.01.4 Crear grupo
 Un grupo sólo podrá ser creado si tiene completos todos sus campos.
 
-PRUEBAS DE ACEPTACIÓN:
-1. grupo correcto
-  - hay una lista con todos los grupos
-  - se intenta añadir un grupo con: nombre = G5, categoría = alevín/infantil, horario = Lunes de 9:00 a 10:00, Martes de 9:00 a 10:00, límite de alumnos = 20, precioMes = 45, ubicación = Triana
-  - se comprueba que el grupo se ha añadido a la lista
-2. grupo sin algún campo
-  - hay una lista con todos los grupos
-  - se intenta añadir un grupo con: (cualquier campo) = NULL
-  - se comprueba que el grupo no se ha añadido a la lista
-3. grupo con nombre repetido
-  - hay una lista con todos los grupos
-  - se comprueba que en la lista está un grupo con: nombre = G3
-  - se intenta añadir un grupo con: nombre = G3
-  - se comprueba que el grupo no se ha añadido a la lista
-  - se comprueba que el grupo anterior sigue en la lista sin modificaciones en sus atributos
-4. grupo con limite alumno negativo
-  - hay una lista con todos los grupos
-  - se intenta añadir un grupo con: limiteAlumnos = -3
-  - se comprueba que el grupo no está en la lista
-  -- 
+- PRUEBAS DE ACEPTACIÓN:
+    - grupo correcto: CORRECTO
+    - grupo sin algún campo: FALLO
+    - grupo con nombre repetido: FALLO
+    - grupo con limite alumno negativo: FALLO
 
 #### R.N.01.5 Actualizar grupo
 Un grupo puede ser actualizado sólo si todos sus campos me mantienen completos tras la modificación
 
-PRUEBAS DE ACEPTACIÓN:
-1. grupo correcto
-  - hay una lista con todos los grupos
-  - se añade un grupo con: nombre = G5, categoría = alevín/infantil, horario = Lunes de 9:00 a 10:00, Martes de 9:00 a 10:00, límite de alumnos = 20, precioMes = 45, ubicación = Triana
-  - se intenta modificar el grupo: precioMes = 35
-  - se comprueba que el grupo está en la lista con el precio actualizado
-2. grupo con nombre repetido
-  - hay una lista con todos los grupos
-  - se añade un grupo con: nombre = G2
-  - se añade un grupo con: nombre = G3
-  - se intenta modificar el grupo G3 con: nombre = G2
-  - se comprueba que el grupo G2 está en la lista sin modificaciones
+- PRUEBAS DE ACEPTACIÓN:
+    - grupo correcto: CORRECTO
+    - grupo con nombre repetido: FALLO
 
 #### R.N.01.6 Eliminar grupo
 Un grupo no puede ser eliminado.
 
-PRUEBAS DE ACEPTACIÓN:
-- hay una lista con todos los grupos
-- se intenta eliminar un grupo de la lista
-- se comprueba que el grupo está en la lista
+- PRUEBAS DE ACEPTACIÓN:
+    - se intenta eliminar: FALLO
 
 #### R.N.01.7 Código Federativo
 Un alumno debe tener un código federativo único que lo identifique en el sistema.
 
-PRUEBAS DE ACEPTACIÓN:
-1. Código federativo válido
-  - hay una lista con todos los alumnos
-  - se añade un alumno con: codigo federativo = NULL
-  - se intenta modificar al alumno con: código federativo = "12345"
-  - se comprueba que el alumno está en la lista con su codigo federativo correspondiente
-2. Código federativo ya existente
-  - hay una lista con todos los alumnos
-  - se añade un alumno con: código federativo = "12345"
-  - se añade un alumno con: codigo federativo = NULL
-  - se intenta modificar al alumno con: código federativo = "12345"
-  - se comprueba que el alumno está en la lista con codigo federativo = NULL
+- PRUEBAS DE ACEPTACIÓN:
+    - Código federativo válido: CORRECTO
+    - Código federativo ya existente: FALLO (poner a null o dejar antiguo)
 
 #### R.N.01.8 Cláusula de protección de datos
 Todos los alumnos deben aceptar la cláusula de protección de datos para que se pueda registrar su información en el sistema.
 
-PRUEBAS DE ACEPTACIÓN:
-1. Cláusula de protección de datos aceptada
-  - hay una lista con todos los alumnos
-  - se intenta añadir un alumno con: clausulaPDD = TRUE
-  - se comprueba que el alumno está en la lista
-2. Cláusula de protección de datos no aceptada
-  - hay una lista con todos los alumnos
-  - se intenta añadir un alumno con: clausulaPDD = FALSE
-  - se comprueba que el alumno no está en la lista
+- PRUEBAS DE ACEPTACIÓN:
+    - Cláusula de protección de datos aceptada: CORRECTO
+    - Cláusula de protección de datos no aceptada: FALLO
 
 #### R.N.01.9 Creación grado
 El sistema debe permitir apuntar nuevos grados.
 
-PRUEBAS DE ACEPTACIÓN:
-1. Grado válido
-  - hay una lista con todos los grados
-  - se intenta añadir un grado con: fecha inicio = 1/10/2024, fecha fin = 3/11/2024, fecha licencia = 5/11/2024, gradoCinturon = blanco-amarillo, alumno = A1
-  - se comprueba que el grado está en la lista
-2. Grado duplicado
-  - hay una lista con todos los grupos
-  - se añade un grado con: fecha inicio = 1/10/2024, fecha fin = NULL, fecha licencia = 1/11/2024, gradoCinturon = blanco-amarillo, alumno = 1
-  - se intenta añadir un grado con: fecha inicio = 1/10/2024, fecha fin = NULL, fecha licencia = 1/11/2024, gradoCinturon = blanco-amarillo, alumno = 1
-  - se comprueba que el grado está en la lista (una sóla vez)
-3. Grado sin cinturón
-  - hay una lista con todos los grados
-  - se intenta añadir un grado con gradoCinturon = NULL
-  - se comprueba que el grado no está en la lista
-4. Grado sin fecha inicio
-  - hay una lista con todos los grados
-  - se intenta añadir un grado con fechaInicio = NULL
-  - se comprueba que el grado está en la lista con fechaInicio=CURDATE()
-5. Grado sin fecha fin
-  - hay una lista con todos los grados
-  - se intenta añadir un grado con fechaFin = NULL
-  - se comprueba que el grado está en la lista
-6. Grado sin fecha licencia
-  - hay una lista con todos los grados
-  - se intenta añadir un grado con fechaLicencia = NULL
-  - se comprueba que el grado está en la lista
-7. Grado sin alumno
-  - hay una lista con todos los grados
-  - se intenta añadir un grado con alumnoId = NULL
-  - se comprueba que el grado no está en la lista
-8. Grado coincidente: alumno, cinturón
-  - hay una lista con todos los grados
-  - se añade un grado con fecha inicio = 1/10/2024, fecha fin = 1/11/2024, fecha licencia = 3/11/2024, grado = blanco-amarillo, alumno = 1
-  - se intenta añadir un grado con fecha inicio = 19/12/2024, fecha fin = 30/12/2024, fecha licencia = NULL, grado = blanco-amarillo, alumno = 1
-  - se comprueba que el grado no está en la lista
-9. fecha inicio posterior a la actual
-  - hay una lista con todos los grados
-  - se intenta añadir un grado con fecha inicio = 19/12/2025, fecha licencia = CURDATE()
-  - se comprueba que el grado no está en la lista
-10. fecha licencia posterior a la actual
-  - hay una lista con todos los grados
-  - se intenta añadir un grado con fecha licencia = 1/1/2040
-  - se comprueba que el grado no está en la lista
-11. fecha fin posterior a la actual
-  - hay una lista con todos los grados
-  - se intenta añadir un grado con fecha fin = 1/1/2040
-  - se comprueba que el grado no está en la lista
+- PRUEBAS DE ACEPTACIÓN:
+    - Grado válido: CORRECTO
+    - Grado duplicado: FALLO
+    - Grado sin cinturón: FALLO
+    - Grado sin fecha inicio: CORRECTO (fecha inicio = actual)
+    - Grado sin fecha fin: CORRECTO
+    - Grado sin fecha licencia: CORRECTO
+    - Grado sin alumno: FALLO
+    - Grado coincidente en alumno, cinturón: FALLO
+    - fecha inicio posterior a la actual: FALLO
+    - fecha licencia posterior a la actual: FALLO
+    - fecha fin posterior a la actual: FALLO
 12. fecha licencia anterior a la inicial
   - hay una lista con todos los grados
   - se intenta añadir un grado con fecha inicio = 19/12/2024, fecha licencia = 1/1/1999
