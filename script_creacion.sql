@@ -1,8 +1,9 @@
-DROP DATABASE IF EXISTS Proyecto;
-CREATE DATABASE Proyecto;
-USE Proyecto;
- 
- -- eliminación tablas
+DROP DATABASE IF EXISTS ProyectoDojo;
+CREATE DATABASE ProyectoDojo;
+USE ProyectoDojo;
+
+
+-- eliminación tablas
 
 DROP TABLE IF EXISTS Pagos;
 DROP TABLE IF EXISTS InfosSanitarias;
@@ -17,7 +18,8 @@ DROP TABLE IF EXISTS TutoresLegales;
 DROP TABLE IF EXISTS Alumnos;
 DROP TABLE IF EXISTS Domicilios;
 DROP TABLE IF EXISTS Personas;
- 
+
+
 -- creación tablas
 
 CREATE TABLE Personas (
@@ -40,20 +42,16 @@ CREATE TABLE TutoresLegales (
     correoAlternativo VARCHAR(255),
     parentesco VARCHAR(50) NOT NULL,
     personaId INT NOT NULL,
-    -- Foreign keys
     FOREIGN KEY (personaId) REFERENCES Personas(personaId) ON DELETE CASCADE
 );
 
 CREATE TABLE Grupos (
     grupoId INT PRIMARY KEY AUTO_INCREMENT,
     nombre VARCHAR(100) NOT NULL UNIQUE,
-    limiteAlumnos INT NOT NULL,
-    categoria VARCHAR(100) NOT NULL,
+    limiteAlumnos INT NOT NULL CHECK (limiteAlumnos >= 0),
+    categoria VARCHAR(100) NOT NULL CHECK (categoria IN ("Alevín-Infantil", "Juvenil-Adulto")),
     ubicacion VARCHAR(100) NOT NULL,
     precioMes INT NOT NULL,
-    -- Checks/Constraints
-    CONSTRAINT c_limite_AlumnosGrupos CHECK (limiteAlumnos >= 0),
-    CONSTRAINT c_categoria_Grupos CHECK (categoria IN ("Alevín-Infantil", "Juvenil-Adulto")),
     CONSTRAINT grupos_repetidos UNIQUE (nombre,ubicacion)
 );
 
@@ -65,29 +63,20 @@ CREATE TABLE Alumnos (
     dni VARCHAR(15) UNIQUE,
     clausulaPDD BOOLEAN NOT NULL,
     domicilioId INT NOT NULL,
-    personaId INT NOT NULL,
-    tutorId INT,
-    grupoIdEntreno INT,
-    grupoIdEspera INT,
-    -- Foreign keys
-    FOREIGN KEY (personaId) REFERENCES Personas(personaId) ON DELETE CASCADE,
     FOREIGN KEY (domicilioId) REFERENCES Domicilios(domicilioId),
+    personaId INT NOT NULL,
+    FOREIGN KEY (personaId) REFERENCES Personas(personaId) ON DELETE CASCADE,
+    tutorId INT,
     FOREIGN KEY (tutorId) REFERENCES TutoresLegales(tutorId),
+    grupoIdEntreno INT,
     FOREIGN KEY (grupoIdEntreno) REFERENCES Grupos(grupoId),
+    grupoIdEspera INT,
     FOREIGN KEY (grupoIdEspera) REFERENCES Grupos(grupoId)
 );
 
 CREATE TABLE Grados (
     gradoId INT PRIMARY KEY AUTO_INCREMENT,
-    gradoCinturon VARCHAR(50) NOT NULL,
-    fechaInicio DATE NOT NULL DEFAULT CURDATE(),
-    fechaFin DATE DEFAULT NULL,
-    fechaLicencia DATE DEFAULT NULL,
-    alumnoId INT NOT NULL,
-    -- Foreign keys
-    FOREIGN KEY (alumnoId) REFERENCES Alumnos(alumnoId) ON DELETE CASCADE,
-    -- Checks/Constraints
-    CONSTRAINT c_gradoCinturon_Grados CHECK (gradoCinturon IN (
+    gradoCinturon VARCHAR(50) NOT NULL CHECK (gradoCinturon IN (
         "Blanco",
         "Blanco-Amarillo",
         "Amarillo",
@@ -109,13 +98,17 @@ CREATE TABLE Grados (
         "Negro 8ºDan",
         "Negro 9ºDan",
         "Negro 10ºDan"
-    ))
+    )),
+    fechaInicio DATE NOT NULL DEFAULT CURDATE(),
+    fechaFin DATE DEFAULT NULL,
+    fechaLicencia DATE DEFAULT NULL,
+    alumnoId INT NOT NULL,
+    FOREIGN KEY (alumnoId) REFERENCES Alumnos(alumnoId) ON DELETE CASCADE,
 );
 
 CREATE TABLE Senseis (
     senseiId INT PRIMARY KEY AUTO_INCREMENT,
     personaId INT NOT NULL,
-    -- Foreign keys
     FOREIGN KEY (personaId) REFERENCES Personas(personaId) ON DELETE CASCADE
 );
 
@@ -124,7 +117,6 @@ CREATE TABLE Sesiones (
     fechaHora DATETIME NOT NULL,
     temporada VARCHAR(50),
     grupoId INT NOT NULL,
-    -- Foreign keys
     FOREIGN KEY (grupoId) REFERENCES Grupos(grupoId) ON DELETE CASCADE
 );
 
@@ -132,9 +124,8 @@ CREATE TABLE Asistencias (
     asistenciaId INT PRIMARY KEY AUTO_INCREMENT,
     alumnoPresente BOOLEAN NOT NULL,
     alumnoId INT NOT NULL,
-    sesionId INT NOT NULL,
-    -- Foreign keys
     FOREIGN KEY (alumnoId) REFERENCES Alumnos(alumnoId) ON DELETE CASCADE,
+    sesionId INT NOT NULL,
     FOREIGN KEY (sesionId) REFERENCES Sesiones(sesionId) ON DELETE CASCADE
 );
 
@@ -143,9 +134,8 @@ CREATE TABLE Observaciones (
     fecha DATE NOT NULL,
     argumento VARCHAR(100),
     alumnoId INT NOT NULL,
-    senseiId INT NOT NULL,
-    -- Foreign keys
     FOREIGN KEY (alumnoId) REFERENCES Alumnos(alumnoId) ON DELETE CASCADE,
+    senseiId INT NOT NULL,    
     FOREIGN KEY (senseiId) REFERENCES Senseis(senseiId) ON DELETE CASCADE
 );
 
@@ -155,7 +145,6 @@ CREATE TABLE Anuncios (
     fechaHora DATE NOT NULL DEFAULT CURDATE(),
     descripcion TEXT NOT NULL,
     senseiId INT NOT NULL,
-    -- Foreign keys
     FOREIGN KEY (senseiId) REFERENCES Senseis(senseiId) ON DELETE CASCADE
 );
 
@@ -163,7 +152,6 @@ CREATE TABLE InfosSanitarias (
     infoSanitariaId INT PRIMARY KEY AUTO_INCREMENT,
     argumento TEXT NOT NULL,
     alumnoId INT NOT NULL,
-    -- Foreign keys
     FOREIGN KEY (alumnoId) REFERENCES Alumnos(alumnoId) ON DELETE CASCADE
 );
 
@@ -171,29 +159,25 @@ CREATE TABLE Pagos (
     pagoId INT PRIMARY KEY AUTO_INCREMENT,
     cantidad DECIMAL(5,2) NOT NULL,
     fecha DATE NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    metodo VARCHAR(20) NOT NULL,
-    financiamiento VARCHAR(30) NOT NULL,
-    alumnoId INT NOT NULL,
-    -- Foreign keys
-    FOREIGN KEY (alumnoId) REFERENCES Alumnos(alumnoId) ON DELETE CASCADE,
-    -- Checks/Constraints
-    CONSTRAINT c_metodoPago_Pagos CHECK (metodo IN (
+    metodo VARCHAR(20) NOT NULL CHECK (metodo IN (
         "Efectivo",
         "Transferencia bancaria",
         "PayPal",
         "Bizum"
     )),
-    CONSTRAINT c_financiamiento_Pagos CHECK (financiamiento IN (
+    financiamiento VARCHAR(30) NOT NULL CHECK (financiamiento IN (
         "Inicial",
         "Mensual",
         "Bimensual"
-    ))
+    )),
+    alumnoId INT NOT NULL,
+    FOREIGN KEY (alumnoId) REFERENCES Alumnos(alumnoId) ON DELETE CASCADE
 );
 
 DELIMITER //
--- funciones
 
--- funcion duracion grado: INT
+
+-- función duracion grado
 CREATE OR REPLACE FUNCTION getDuracion(
     IN a_fechaInicio DATE,
     IN a_fechaFin DATE
@@ -213,7 +197,8 @@ BEGIN
     RETURN duracion;
 END //
 
--- funcion cumpleTmin grado: BOOLEAN
+
+-- función cumple tiempo mínimo
 CREATE OR REPLACE FUNCTION getTiempoMin(
     IN a_gradoCinturon VARCHAR(50),
     IN a_fechaInicio DATE,
@@ -257,7 +242,7 @@ BEGIN
     RETURN cumpleTMin;
 END //
 
--- funcion get estado anuncio: ENUM
+-- estado anuncio 
 -- si fechaHora anterior curdate(): estado=sin publicar
 -- si fechaHora => curdate(): estado=publicado
 CREATE OR REPLACE FUNCTION getEstadoAnuncio(
@@ -276,7 +261,7 @@ BEGIN
     RETURN estado;
 END //
 
--- funcion get estado alumno: ENUM
+-- función estado alumno
 -- activo: si grupoIdEntreno o grupoIdEspera
 -- inactivo: si no grupoIdEntreno y no grupoIdEspera
 CREATE OR REPLACE FUNCTION getEstadoAlumno(
@@ -296,7 +281,182 @@ BEGIN
     RETURN estado;
 END //
 
--- procedimiento para trigger informacion contacto
+
+-- procedimiento crear personas
+CREATE OR REPLACE PROCEDURE insertarPersona(
+    IN p_nombre VARCHAR(100),
+    IN p_apellidos VARCHAR(100),
+    IN p_correo VARCHAR(255),
+    IN p_telefono INT
+)
+BEGIN
+    INSERT INTO Personas (nombre, apellidos, telefono, correo)
+    VALUES (p_nombre, p_apellidos, p_telefono, p_correo);
+END //
+
+
+-- prodecimiento crear domicilio
+CREATE OR REPLACE PROCEDURE insertarDomicilio(
+    IN d_direccion VARCHAR(255),
+    IN d_municipio VARCHAR(100),
+    IN d_cp INT
+)
+BEGIN
+    INSERT INTO Domicilios (direccion, municipio, cp)
+    VALUES (d_direccion, d_municipio, d_cp);
+END //
+
+
+-- prodecimiento crear tutor legal
+CREATE OR REPLACE PROCEDURE insertarTutorLegal(
+    IN t_correoAlternativo VARCHAR(255),
+    IN t_parentesco VARCHAR(50),
+    IN t_personaId INT
+)
+BEGIN
+    INSERT INTO TutoresLegales (correoAlternativo, parentesco, personaId)
+    VALUES (t_correoAlternativo, t_parentesco, t_personaId);
+END //
+
+
+-- procedimiento crear grupo
+CREATE OR REPLACE PROCEDURE insertarGrupo(
+    IN g_nombre VARCHAR(100),
+    IN g_ubicacion VARCHAR(100),
+    IN g_categoria VARCHAR(100),
+    IN g_limiteAlumnos INT,
+    IN g_precioMes INT
+)
+BEGIN
+    INSERT INTO Grupos(nombre, ubicacion, categoria, limiteAlumnos, precioMes)
+    VALUES (g_nombre, g_ubicacion, g_categoria, g_limiteAlumnos, g_precioMes);
+END //
+
+
+-- procedimiento crear alumno
+CREATE OR REPLACE PROCEDURE insertarAlumno(
+    IN a_razonInscripcion TEXT,
+    IN a_fechaNacimiento DATE,
+    IN a_codigoFederativo INT,
+    IN a_dni VARCHAR(15),
+    IN a_clausulaPDD BOOLEAN,
+    IN a_personaId INT,
+    IN a_domicilioId INT,
+    IN a_tutorId INT,
+    IN a_grupoIdEntreno INT,
+    IN a_grupoIdEspera INT
+)
+BEGIN
+    INSERT INTO Alumnos (razonInscripcion, fechaNacimiento, codigoFederativo, dni, clausulaPDD, personaId, domicilioId, tutorId, grupoIdEntreno, grupoIdEspera)
+    VALUES (a_razonInscripcion, a_fechaNacimiento, a_codigoFederativo, a_dni, a_clausulaPDD, a_personaId, a_domicilioId, a_tutorId, a_grupoIdEntreno, a_grupoIdEspera);
+END //
+
+
+-- procedimiento crear grado
+CREATE OR REPLACE PROCEDURE insertarGrado(
+    IN g_gradoCinturon VARCHAR(50),
+    IN g_fechaInicio DATE,
+    IN g_fechaLicencia DATE,
+    IN g_fechaFin DATE,
+    IN g_alumnoId INT
+)
+BEGIN
+    INSERT INTO Grados(gradoCinturon, fechaInicio, fechaFin, fechaLicencia, alumnoId)
+    VALUES (g_gradoCinturon, g_fechaInicio, g_fechaFin, g_fechaLicencia, g_alumnoId);
+END //
+
+
+-- procedimiento crear sensei
+CREATE OR REPLACE PROCEDURE insertarSensei(
+    IN s_personaId INT
+)
+BEGIN
+    INSERT INTO Senseis(personaId)
+    VALUES (s_personaId);
+END //
+
+
+-- procedimiento crear sesiones
+CREATE OR REPLACE PROCEDURE insertarSesion(
+    IN s_fechaHora DATE,
+    IN s_temporada VARCHAR(50),
+    IN s_grupoId INT
+)
+BEGIN
+    INSERT INTO Sesiones(fechaHora, temporada, grupoId)
+    VALUES (s_fechaHora, s_temporada, s_grupoId);
+END //
+
+
+-- procedimiento crear asistencias
+CREATE OR REPLACE PROCEDURE insertarAsistencia(
+    IN a_alumnoPresente BOOLEAN,
+    IN a_alumnoId INT,
+    IN a_sesionId INT
+)
+BEGIN
+    INSERT INTO Asistencias(alumnoPresente, alumnoId, sesionId)
+    VALUES (a_alumnoPresente, a_alumnoId, a_sesionId);
+END //
+
+
+-- procedimiento crear observaciones
+CREATE OR REPLACE PROCEDURE insertarObservacion(
+    IN o_fecha DATE,
+    IN o_argumento VARCHAR(100),
+    IN o_alumnoId INT,
+    IN o_senseiId INT
+)
+BEGIN
+    INSERT INTO Observaciones(fecha, argumento, alumnoId, senseiId)
+    VALUES (o_fecha, o_argumento, o_alumnoId, o_senseiId);
+END //
+
+
+-- procedimiento crear anuncios
+CREATE OR REPLACE PROCEDURE insertarAnuncio(
+    IN a_asunto VARCHAR(255),
+    IN a_fechaHora DATE,
+    IN a_descripcion TEXT,
+    IN a_senseiId INT
+)
+BEGIN
+    INSERT INTO Anuncios(asunto, fechaHora, descripcion, senseiId)
+    VALUES (a_asunto, a_fechaHora, a_descripcion, a_senseiId);
+END //
+
+
+-- procedimiento crear info sanitarias
+CREATE OR REPLACE PROCEDURE insertarInfoSanitaria(
+    IN i_argumento TEXT,
+    IN i_alumnoId INT
+)
+BEGIN
+    INSERT INTO InfosSanitarias(argumento, alumnoId)
+    VALUES (i_argumento, i_alumnoId);
+END //
+
+
+-- procedimiento crear pagos
+CREATE OR REPLACE PROCEDURE insertarPago(
+    IN p_cantidad DECIMAL(5,2),
+    IN p_fecha DATE,
+    IN p_metodo VARCHAR(20),
+    IN p_financiamiento VARCHAR(30),
+    in p_alumnoId INT
+)
+BEGIN
+    INSERT INTO Pagos(cantidad, fecha, metodo, financiamiento, alumnoId)
+    VALUES (p_cantidad, p_fecha, p_metodo, p_financiamiento, p_alumnoId);
+END //
+
+
+-- trigger información contacto
+-- telefono y correo obligatorio según edad
+-- si alumno menor edad, debe tener tutor
+-- si alumno menor edad, tutor debe tener telefono y correo
+-- si alumno mayor edad, tutorId a null
+-- si alumno mayor edad, alumno debe tener telefono y correo
 CREATE OR REPLACE PROCEDURE informacionContacto(
     IN a_fechaNacimiento DATE,
     IN a_personaId INT,
@@ -328,7 +488,6 @@ BEGIN
         			JOIN TutoresLegales ON Personas.personaId = TutoresLegales.personaId
         		WHERE TutoresLegales.tutorId = a_tutorId;
 
-            -- Verificar si el tutor tiene teléfono y correo
             IF telefonoTutor IS NULL THEN
                 SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Un tutor legal debe tener teléfono de contacto.';
             END IF;
@@ -352,8 +511,31 @@ BEGIN
     END IF;
 END;
 
+CREATE OR REPLACE TRIGGER contactoCrearAlumnos
+BEFORE INSERT ON Alumnos
+FOR EACH ROW
+BEGIN
+    CALL informacionContacto(
+        NEW.fechaNacimiento,
+        NEW.personaId,
+        NEW.tutorId
+    );
+END //
 
--- procedimiento para trigger solape sesiones
+CREATE OR REPLACE TRIGGER contactoActualizarAlumnos
+BEFORE UPDATE ON Alumnos
+FOR EACH ROW
+BEGIN
+    CALL informacionContacto(
+        NEW.fechaNacimiento,
+        NEW.personaId,
+        NEW.tutorId
+    );
+END //
+
+
+-- trigger solape sesiones
+-- fechaHora y ubicacion
 CREATE OR REPLACE PROCEDURE sesionesSolapadas(
     IN s_fechaHora DATETIME,
     IN s_grupoId INT
@@ -379,7 +561,29 @@ BEGIN
     END IF;
 END;
 
--- procedimiento para trigger dni obligatorio
+CREATE OR REPLACE TRIGGER solapeCreacionSesiones
+BEFORE INSERT ON Sesiones
+FOR EACH ROW
+BEGIN
+    CALL sesionesSolapadas(
+        NEW.fechaHora,
+        NEW.grupoId
+    );
+END //
+
+CREATE OR REPLACE TRIGGER solapeActualizacionSesiones
+BEFORE UPDATE ON Sesiones
+FOR EACH ROW
+BEGIN
+    CALL sesionesSolapadas(
+        NEW.fechaHora,
+        NEW.grupoId
+    );
+END //
+
+
+-- trigger dni
+-- dni a null si alumno <14
 CREATE OR REPLACE PROCEDURE dniObligatorio(
     IN a_fechaNacimiento DATE,
     INOUT a_dni VARCHAR(15)
@@ -395,7 +599,39 @@ BEGIN
     END IF;
 END;
 
--- procedimiento para trigger alumno dos grupos
+CREATE OR REPLACE TRIGGER dniCrearAlumno
+BEFORE INSERT ON Alumnos
+FOR EACH ROW
+BEGIN
+    CALL dniObligatorio(
+        NEW.fechaNacimiento,
+        NEW.dni
+    );
+END //
+
+CREATE OR REPLACE TRIGGER dniActualizarAlumno
+BEFORE UPDATE ON Alumnos
+FOR EACH ROW
+BEGIN
+    CALL dniObligatorio(
+        NEW.fechaNacimiento,
+        NEW.dni
+    );
+END //
+
+
+-- trigger cláusula de protección de datos
+CREATE OR REPLACE TRIGGER proteccionDatos
+BEFORE INSERT ON Alumnos
+FOR EACH ROW
+BEGIN
+    IF(NEW.clausulaPDD=FALSE) THEN
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'un alumno debe aceptar la cláusula de proteccion de datos';
+    END IF;
+END //
+
+
+-- trigger alumnos dos grupos
 CREATE OR REPLACE PROCEDURE alumnoDosGrupos(
     IN a_grupoIdEntreno INT,
     IN a_grupoIdEspera INT
@@ -406,7 +642,28 @@ BEGIN
     END IF;
 END;
 
--- procedimiento para trigger grupo completo
+CREATE OR REPLACE TRIGGER creacionAlumnoDosGrupos
+BEFORE INSERT ON Alumnos
+FOR EACH ROW
+BEGIN
+    CALL alumnoDosGrupos(
+        NEW.grupoIdEntreno,
+        NEW.grupoIdEspera
+    );
+END //
+
+CREATE OR REPLACE TRIGGER actualizacionAlumnoDosGrupos
+BEFORE UPDATE ON Alumnos
+FOR EACH ROW
+BEGIN
+    CALL alumnoDosGrupos(
+        NEW.grupoIdEntreno,
+        NEW.grupoIdEspera
+    );
+END //
+
+
+-- trigger añadir alumno a grupo completo
 CREATE OR REPLACE PROCEDURE grupoCompleto(
     IN g_idEntreno INT
 )
@@ -431,7 +688,22 @@ BEGIN
     END IF;
 END;
 
--- procedimiento para trigger grupo adecuado
+CREATE OR REPLACE TRIGGER validarCapacidadGrupoCreacion
+BEFORE INSERT ON Alumnos
+FOR EACH ROW
+BEGIN
+    CALL grupoCompleto(NEW.grupoIdEntreno);
+END //
+
+CREATE OR REPLACE TRIGGER validarCapacidadGrupoActualizacion
+BEFORE UPDATE ON Alumnos
+FOR EACH ROW
+BEGIN
+    CALL grupoCompleto(NEW.grupoIdEntreno);
+END //
+
+
+-- trigger alumno en grupo adecuado
 -- alevín infantil <=13 años< juvenil adulto
 CREATE OR REPLACE PROCEDURE grupoAdecuado(
     IN alumno INT,
@@ -475,7 +747,22 @@ BEGIN
     END IF;
 END;
 
--- procedimiento para trigger fecha grados
+CREATE OR REPLACE TRIGGER grupoAdecuadoCreacion
+BEFORE INSERT ON Alumnos
+FOR EACH ROW
+BEGIN
+    CALL grupoAdecuado(NEW.alumnoId,NEW.grupoIdEntreno,NEW.grupoIdEspera);
+END //
+
+CREATE OR REPLACE TRIGGER grupoAdecuadoActualizacion
+BEFORE UPDATE ON Alumnos
+FOR EACH ROW
+BEGIN
+    CALL grupoAdecuado(NEW.alumnoId,NEW.grupoIdEntreno,NEW.grupoIdEspera);
+END //
+
+
+-- trigger fecha grados
 CREATE OR REPLACE PROCEDURE fechaGrados(
     IN g_fechaInicio DATE,
     IN g_fechaLicencia DATE,
@@ -503,310 +790,6 @@ BEGIN
     END IF;
 END;
 
--- procedimiento crear personas
-CREATE OR REPLACE PROCEDURE insertarPersona(
-    IN p_nombre VARCHAR(100),
-    IN p_apellidos VARCHAR(100),
-    IN p_correo VARCHAR(255),
-    IN p_telefono INT
-)
-BEGIN
-    -- insertar nueva persona
-    INSERT INTO Personas (nombre, apellidos, telefono, correo)
-    VALUES (p_nombre, p_apellidos, p_telefono, p_correo);
-END //
-
--- prodecimiento crear domicilio
-CREATE OR REPLACE PROCEDURE insertarDomicilio(
-    IN d_direccion VARCHAR(255),
-    IN d_municipio VARCHAR(100),
-    IN d_cp INT
-)
-BEGIN
-    -- insertar nuevo domicilio
-    INSERT INTO Domicilios (direccion, municipio, cp)
-    VALUES (d_direccion, d_municipio, d_cp);
-END //
-
--- prodecimiento crear tutor legal
-CREATE OR REPLACE PROCEDURE insertarTutorLegal(
-    IN t_correoAlternativo VARCHAR(255),
-    IN t_parentesco VARCHAR(50),
-    IN t_personaId INT
-)
-BEGIN
-    -- insertar nuevo tutor legal
-    INSERT INTO TutoresLegales (correoAlternativo, parentesco, personaId)
-    VALUES (t_correoAlternativo, t_parentesco, t_personaId);
-END //
-
--- procedimiento crear grupo
-CREATE OR REPLACE PROCEDURE insertarGrupo(
-    IN g_nombre VARCHAR(100),
-    IN g_ubicacion VARCHAR(100),
-    IN g_categoria VARCHAR(100),
-    IN g_limiteAlumnos INT,
-    IN g_precioMes INT
-)
-BEGIN
-    -- insertar nuevo grupo
-    INSERT INTO Grupos(nombre, ubicacion, categoria, limiteAlumnos, precioMes)
-    VALUES (g_nombre, g_ubicacion, g_categoria, g_limiteAlumnos, g_precioMes);
-END //
-
--- procedimiento crear alumno
-CREATE OR REPLACE PROCEDURE insertarAlumno(
-    IN a_razonInscripcion TEXT,
-    IN a_fechaNacimiento DATE,
-    IN a_codigoFederativo INT,
-    IN a_dni VARCHAR(15),
-    IN a_clausulaPDD BOOLEAN,
-    IN a_personaId INT,
-    IN a_domicilioId INT,
-    IN a_tutorId INT,
-    IN a_grupoIdEntreno INT,
-    IN a_grupoIdEspera INT
-)
-BEGIN
-    -- insertar nuevo alumno
-    INSERT INTO Alumnos (razonInscripcion, fechaNacimiento, codigoFederativo, dni, clausulaPDD, personaId, domicilioId, tutorId, grupoIdEntreno, grupoIdEspera)
-    VALUES (a_razonInscripcion, a_fechaNacimiento, a_codigoFederativo, a_dni, a_clausulaPDD, a_personaId, a_domicilioId, a_tutorId, a_grupoIdEntreno, a_grupoIdEspera);
-END //
-
--- procedimiento crear grado
-CREATE OR REPLACE PROCEDURE insertarGrado(
-    IN g_gradoCinturon VARCHAR(50),
-    IN g_fechaInicio DATE,
-    IN g_fechaLicencia DATE,
-    IN g_fechaFin DATE,
-    IN g_alumnoId INT
-)
-BEGIN
-    -- insertar nuevo grado
-    INSERT INTO Grados(gradoCinturon, fechaInicio, fechaFin, fechaLicencia, alumnoId)
-    VALUES (g_gradoCinturon, g_fechaInicio, g_fechaFin, g_fechaLicencia, g_alumnoId);
-END //
-
--- procedimiento crear sensei
-CREATE OR REPLACE PROCEDURE insertarSensei(
-    IN s_personaId INT
-)
-BEGIN
-    -- insertar nuevo sensei
-    INSERT INTO Senseis(personaId)
-    VALUES (s_personaId);
-END //
-
--- procedimiento crear sesiones
-CREATE OR REPLACE PROCEDURE insertarSesion(
-    IN s_fechaHora DATE,
-    IN s_temporada VARCHAR(50),
-    IN s_grupoId INT
-)
-BEGIN
-    -- insertar nueva sesion
-    INSERT INTO Sesiones(fechaHora, temporada, grupoId)
-    VALUES (s_fechaHora, s_temporada, s_grupoId);
-END //
-
--- procedimiento crear asistencias
-CREATE OR REPLACE PROCEDURE insertarAsistencia(
-    IN a_alumnoPresente BOOLEAN,
-    IN a_alumnoId INT,
-    IN a_sesionId INT
-)
-BEGIN
-    -- insertar nueva asistencia
-    INSERT INTO Asistencias(alumnoPresente, alumnoId, sesionId)
-    VALUES (a_alumnoPresente, a_alumnoId, a_sesionId);
-END //
-
--- procedimiento crear observaciones
-CREATE OR REPLACE PROCEDURE insertarObservacion(
-    IN o_fecha DATE,
-    IN o_argumento VARCHAR(100),
-    IN o_alumnoId INT,
-    IN o_senseiId INT
-)
-BEGIN
-    -- insertar nueva observacion
-    INSERT INTO Observaciones(fecha, argumento, alumnoId, senseiId)
-    VALUES (o_fecha, o_argumento, o_alumnoId, o_senseiId);
-END //
-
--- procedimiento crear anuncios
-CREATE OR REPLACE PROCEDURE insertarAnuncio(
-    IN a_asunto VARCHAR(255),
-    IN a_fechaHora DATE,
-    IN a_descripcion TEXT,
-    IN a_senseiId INT
-)
-BEGIN
-    -- insertar nuevo anuncio
-    INSERT INTO Anuncios(asunto, fechaHora, descripcion, senseiId)
-    VALUES (a_asunto, a_fechaHora, a_descripcion, a_senseiId);
-END //
-
--- procedimiento crear info sanitarias
-CREATE OR REPLACE PROCEDURE insertarInfoSanitaria(
-    IN i_argumento TEXT,
-    IN i_alumnoId INT
-)
-BEGIN
-    -- insertar nueva info sanitaria
-    INSERT INTO InfosSanitarias(argumento, alumnoId)
-    VALUES (i_argumento, i_alumnoId);
-END //
-
--- procedimiento crear pagos
-CREATE OR REPLACE PROCEDURE insertarPago(
-    IN p_cantidad DECIMAL(5,2),
-    IN p_fecha DATE,
-    IN p_metodo VARCHAR(20),
-    IN p_financiamiento VARCHAR(30),
-    in p_alumnoId INT
-)
-BEGIN
-    -- insertar nuevo pago
-    INSERT INTO Pagos(cantidad, fecha, metodo, financiamiento, alumnoId)
-    VALUES (p_cantidad, p_fecha, p_metodo, p_financiamiento, p_alumnoId);
-
-
-END //
-
--- triggers
-
--- telefono y correo obligatorio según edad
--- si alumno menor edad, debe tener tutor
--- si alumno menor edad, tutor debe tener telefono y correo
--- si alumno mayor edad, tutorId a null
--- si alumno mayor edad, alumno debe tener telefono y correo
-CREATE OR REPLACE TRIGGER contactoCrearAlumnos
-BEFORE INSERT ON Alumnos
-FOR EACH ROW
-BEGIN
-    CALL informacionContacto(
-        NEW.fechaNacimiento,
-        NEW.personaId,
-        NEW.tutorId
-    );
-END //
-
-CREATE OR REPLACE TRIGGER contactoActualizarAlumnos
-BEFORE UPDATE ON Alumnos
-FOR EACH ROW
-BEGIN
-    CALL informacionContacto(
-        NEW.fechaNacimiento,
-        NEW.personaId,
-        NEW.tutorId
-    );
-END //
-
--- solape sesiones: fechaHora y ubicacion
-CREATE OR REPLACE TRIGGER solapeCreacionSesiones
-BEFORE INSERT ON Sesiones
-FOR EACH ROW
-BEGIN
-    CALL sesionesSolapadas(
-        NEW.fechaHora,
-        NEW.grupoId
-    );
-END //
-
-CREATE OR REPLACE TRIGGER solapeActualizacionSesiones
-BEFORE UPDATE ON Sesiones
-FOR EACH ROW
-BEGIN
-    CALL sesionesSolapadas(
-        NEW.fechaHora,
-        NEW.grupoId
-    );
-END //
-
--- dni a null si alumno <14
-CREATE OR REPLACE TRIGGER dniCrearAlumno
-BEFORE INSERT ON Alumnos
-FOR EACH ROW
-BEGIN
-    CALL dniObligatorio(
-        NEW.fechaNacimiento,
-        NEW.dni
-    );
-END //
-
-CREATE OR REPLACE TRIGGER dniActualizarAlumno
-BEFORE UPDATE ON Alumnos
-FOR EACH ROW
-BEGIN
-    CALL dniObligatorio(
-        NEW.fechaNacimiento,
-        NEW.dni
-    );
-END //
-
--- alumno con cpd true
-CREATE OR REPLACE TRIGGER proteccionDatos
-BEFORE INSERT ON Alumnos
-FOR EACH ROW
-BEGIN
-    IF(NEW.clausulaPDD=FALSE) THEN
-        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'un alumno debe aceptar la cláusula de proteccion de datos';
-    END IF;
-END //
-
--- alumnos. grupo id. no se pueden los dos a la vez
-CREATE OR REPLACE TRIGGER creacionAlumnoDosGrupos
-BEFORE INSERT ON Alumnos
-FOR EACH ROW
-BEGIN
-    CALL alumnoDosGrupos(
-        NEW.grupoIdEntreno,
-        NEW.grupoIdEspera
-    );
-END //
-
-CREATE OR REPLACE TRIGGER actualizacionAlumnoDosGrupos
-BEFORE UPDATE ON Alumnos
-FOR EACH ROW
-BEGIN
-    CALL alumnoDosGrupos(
-        NEW.grupoIdEntreno,
-        NEW.grupoIdEspera
-    );
-END //
-
--- añadir alumno a grupo completo
-CREATE OR REPLACE TRIGGER validarCapacidadGrupoCreacion
-BEFORE INSERT ON Alumnos
-FOR EACH ROW
-BEGIN
-    CALL grupoCompleto(NEW.grupoIdEntreno);
-END //
-
-CREATE OR REPLACE TRIGGER validarCapacidadGrupoActualizacion
-BEFORE UPDATE ON Alumnos
-FOR EACH ROW
-BEGIN
-    CALL grupoCompleto(NEW.grupoIdEntreno);
-END //
-
--- alumno en grupo adecuado
-CREATE OR REPLACE TRIGGER grupoAdecuadoCreacion
-BEFORE INSERT ON Alumnos
-FOR EACH ROW
-BEGIN
-    CALL grupoAdecuado(NEW.alumnoId,NEW.grupoIdEntreno,NEW.grupoIdEspera);
-END //
-
-CREATE OR REPLACE TRIGGER grupoAdecuadoActualizacion
-BEFORE UPDATE ON Alumnos
-FOR EACH ROW
-BEGIN
-    CALL grupoAdecuado(NEW.alumnoId,NEW.grupoIdEntreno,NEW.grupoIdEspera);
-END //
-
--- grados fecha
 CREATE OR REPLACE TRIGGER fechaCreacionGrados
 BEFORE INSERT ON Grados
 FOR EACH ROW
@@ -831,7 +814,6 @@ END //
 
 DELIMITER ;
 
--- vistas
 
 -- vista grados con duracion y cumpleTMin
 CREATE OR REPLACE VIEW VistaGrados AS
@@ -845,6 +827,7 @@ SELECT
     getTiempoMin(gradoCinturon, fechaInicio, fechaFin) AS cumpleTMin
 FROM Grados;
 
+
 -- vista anuncios con estado
 CREATE OR REPLACE VIEW VistaAnuncios AS
 SELECT
@@ -855,6 +838,7 @@ SELECT
     fechaHora,
     getEstadoAnuncio(fechaHora) AS estadoAnuncio
 FROM Anuncios;
+
 
 -- vista alumnos con estado
 CREATE OR REPLACE VIEW VistaAlumnos AS
@@ -873,7 +857,8 @@ SELECT
     clausulaPDD
 FROM Alumnos;
 
--- historial ascensos
+
+-- vista historial ascensos
 -- de cada alumno, los grados que ha tenido
 CREATE OR REPLACE VIEW historialAscensos AS
 SELECT Personas.personaId, Personas.nombre, Personas.apellidos, VistaGrados.gradoCinturon, VistaGrados.fechaInicio, VistaGrados.duracion
@@ -882,7 +867,8 @@ FROM VistaGrados
     JOIN Personas ON Alumnos.personaId = Personas.personaId
 ORDER BY Personas.personaId, VistaGrados.fechaInicio ASC;
 
--- informe grupo
+
+-- vista informe grupo
 -- asistencia media de la última temporada
 -- alumnos con valor de asistencia mayor
 CREATE OR REPLACE VIEW asistenciasAlumnos AS
@@ -923,7 +909,8 @@ WHERE asistenciasAlumnos.temporada = (
 )
 GROUP BY asistenciasAlumnos.grupoId, asistenciasAlumnos.temporada, asistenciasAlumnos.alumnoId;
 
--- informe individual de alumno
+
+-- vista informe individual de alumno
 -- de todas las temporadas en las que estaba activo
 -- porcentaje asistencia por temporada: sesiones asistidas / sesiones totales
 -- grados que ha tenido

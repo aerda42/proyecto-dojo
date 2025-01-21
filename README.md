@@ -4,63 +4,9 @@
 
 El proyecto tiene como objetivo hacer una página web para el dojo de karate GYM-DO, que permita mejorar la gestión interna de la escuela y ofrecer una interfaz digital óptima para los interesados en practicar en el dojo.
 
-Actualmente, la escuela GYM-DO presenta ineficiencias respecto a la gestión de la información de los alumnos, el control de los pagos y los métodos de comunicación.
+---
 
-La implementación de esta página web permitirá automatizar procesos clave, facilitar la carga de trabajo del sensei, aumentar la visibilidad del dojo para los nuevos miembros, y mejorar la experiencia de los usuarios.
-
------------------------------------------------
-
-## 2. Glosario de términos
-
-- **Alumno**: Persona que realiza karate en el dojo GYM-DO.
-    
-- **Categoría**: Característica asociada a un grupo para diferenciarlos respecto a la edad de sus integrantes
-    
-- **Cinturón**: Cinta de color colocada en la cintura de un alumno para mostrar su nivel
-    
-- **Cláusula de protección de datos**: Declaración que informa a los alumnos sobre el manejo de sus datos personales.
-    
-- **Código federativo**: Número asignado por la F.A.K. (Federación Andaluza de Karate) para identificar a un karateka de forma oficial y a nivel nacional.
-    
-- **Dojo**: Sala donde se practica un arte marcial, en este caso se refiere al GYM-DO, donde se practica karate.
-    
-- **Formulario de inscripción**: Documento que permite a una persona matricularse por primera vez en la escuela GYM-DO.
-    
-- **Formulario de renovación**: Documento que permite a un alumno de GYM-DO volver a matricularse en la escuela.
-    
-- **Grado**: Nivel de experiencia y habilidad de un karateka. Éste viene representado por el color del cinturón.
-    
-- **Grupo**: Conjunto de alumnos que entrenan juntos bajo la dirección de un sensei. Comparten categoría, horario, etc.
-    
-- **ID del club**: Número que identifica a los alumnos que hayan realizado alguna vez el formulario de inscripción. Éste número es único e invariable, y se asigna según el primer día de entrenamiento del alumno.
-    
-- **Karate**: Arte marcial centrada en la defensa personal, la disciplina, el respeto, y el desarrollo físico y mental del karateka.
-    
-- **Karateka**: Persona que practica el karate.
-    
-- **Karateka adulto**: Karateka de más de 18 años.
-    
-- **Karateka alevín**: Karateka de menos de 10 años. 
-    
-- **Karateka infantil**: Karateka de entre 11 y 13 años.
-    
-- **Karateka juvenil**: Karateka de entre 14 y 17 años.
-    
-- **Licencia federativa**: Documento oficial emitido por la R.F.E.K y D.A (Real Federación española de karate y disciplinas asociadas) que protege al karateka con un seguro médico. Además, le permite participar en competiciones y eventos oficiales.
-    
-- **Lista de espera**: Registro de alumnos que desean inscribirse en un grupo ya completo.
-    
-- **Sensei**: Maestro, el profesor de karate de los alumnos.
-
-- **Temporada**: Representa el curso escolar de un año desde septiembre hasta julio.
-
-- **Tutor legal**: Persona mayor de edad que representa a un alumno menor de edad.
-
------------------------------------------------
-
-## 3. Visión general del sistema
-
-### 3.1. Requisitos generales
+## 2. Requisitos generales
 
 #### R.G.01 Gestión de los alumnos
 Como sensei, quiero gestionar la información de los alumnos para llevar un control adecuado de su evolución.
@@ -99,21 +45,8 @@ PRUEBAS DE ACEPTACIÓN:
 
 ---
 
-### 3.2. Usuarios del sistema
+## 3. Requisitos funcionales
 
- - Alumno
- - Tutor legal
- - Sensei
-
----
-
-## 4. Catálogo de requisitos
-
----
-
-### 4.1. Requisitos funcionales
-
----
 
 #### R.F.01.1 Creación de Alumno  
 Permitir la creación de un nuevo alumno mediante un formulario de inscripción online.
@@ -139,8 +72,6 @@ Generar estadísticas de rendimiento de cada grupo, comparando la evolución de 
 #### R.F.01.8 Historial de Ascensos  
 Almacenar un historial de los grado que ha tenido cada alumno y cuándo lo consiguió para un seguimiento detallado.
 
----
-
 #### R.F.02.1 Registro de Pagos  
 Permitir la creación de registros de pago únicos que cubran a varios alumnos a la vez.
 
@@ -153,8 +84,6 @@ Guardar la información de cada pago, incluyendo la cantidad, fecha, y tipo de p
 #### R.F.02.4 Métodos de Pago  
 Habilitar la opción de distintos métodos de pago, como transferencia bancaria, efectivo, PayPal y Bizum.
 
----
-
 #### R.F.03.1 Programación de Anuncios  
 Permitir la programación de anuncios para que el sensei pueda planificar la publicación automática de los mismos en fechas y horas específicas.
 
@@ -166,8 +95,6 @@ Permitir la edición de un anuncio publicado, notificando a los usuarios de cual
 
 #### R.F.03.4 Eliminación de Anuncios  
 Posibilitar la eliminación de anuncios antiguos para mantener la plataforma actualizada.
-
----
 
 #### R.F.04.1 Automatización de Creación de Sesiones  
 Automatizar la creación de sesiones semanales para cada grupo basado en el calendario de la temporada.
@@ -183,9 +110,7 @@ Permitir la eliminación de sesiones programadas en caso de eventos imprevistos.
 
 ---
 
-#### 4.1.1. Requisitos de información
-
----
+## 4. Requisitos de información
 
 #### R.I.01.1 Información de alumno
 Como sensei, quiero guardar información de mis alumnos, en concreto:
@@ -203,19 +128,13 @@ nombre, alumnos en grupo, límite de alumnos, alumnos en lista de espera, catego
 Como sensei, quiero guardar información de los grados de mis alumnos, en concreto:
 grado de cinturón, fecha inicio, fecha fin, fecha licencia, alumno
 
----
-
 #### R.I.02.1 Información de pagos
 Como sensei, quiero guardar información de los pagos realizados por los alumnos, en concreto: 
 cantidad, fecha, financiación (inicial, mensual, bimensual), método (metálico, transferencia bancaria, PayPal, Bizum).
 
----
-
 #### R.I.03.1 Información de Anuncios
 Como sensei, quiero guardar información de la programación de anuncios, en concreto:
 fecha y hora, sensei, estado (publicado, sin publicar), asunto, descripción.
-
----
 
 #### R.I.04.1 Información de Sesiones 
 Como sensei, quiero registrar la información sobre las sesiones, en concreto:
@@ -227,9 +146,7 @@ sesión, alumno, asistencia (presente, ausente)
 
 ---
 
-#### 4.1.2. Reglas de negocio
-
----
+## 5. Reglas de negocio
 
 #### R.N.01.1 Creación alumno
 Un alumno nuevo sólo podrá ser añadido al sistema si tiene todos los campos del formulario de inscripción completos, a excepción de:
@@ -570,8 +487,6 @@ PRUEBAS DE ACEPTACIÓN:
 - se intenta añadir un alumno con: grupoIdEntreno = 1;
 - se comprueba que el alumno no está en la lista
 
----
-
 #### R.N.02.1 Registro de Pagos
 El sistema debe permitir el registro de pagos que cubran múltiples alumnos a la vez, y asegurarse de que se incluya la cantidad, fecha, y método de pago.
 
@@ -582,7 +497,6 @@ PRUEBAS DE ACEPTACIÓN:
 2. Falta de algún campo
   - hay una lista con todos los pagos
   - se intenta añadir un pago con: cantidad = NULL, fecha = 10/10/2024, financiamiento = "mensual", método de transacción = "transferencia bancaria".
-
 
 #### R.N.02.2 Comunicación de Pago
 El sistema debe enviar automáticamente una notificación al correo electrónico del alumno o tutor legal cuando se registre un pago.
@@ -617,8 +531,6 @@ PRUEBAS DE ACEPTACIÓN:
   - hay una lista con todos los pagos
   - se intenta añadir un pago con financiamiento = "Anual"
   - se compueba que el pago no está en la lista
-
----
 
 #### R.N.03.1 Publicación de Anuncios
 El sistema debe permitir la publicación de anuncios y de anuncios programados con anterioridad.
@@ -677,8 +589,6 @@ PRUEBAS DE ACEPTACIÓN:
   - se intenta añadir un anuncio con estado = 'Nuevo'
   - se compueba que el anuncio está en la lista
 
----
-
 #### R.N.04.1 Creación de Sesiones
 El sistema debe generar automáticamente sesiones semanales para cada grupo basándose en el calendario de la temporada y las reglas definidas.
 
@@ -686,7 +596,6 @@ PRUEBAS DE ACEPTACIÓN:
 - hay una lista con todas las sesiones
 - se intenta añadir un calendario con: temporada = 2024-2025, grupos = [G1]
 - se comprueba que en la lista están todas las sesiones del G1
-
 
 #### R.N.04.2 Edición de Sesiones
 El sistema debe permitir que el sensei edite manualmente las fechas, horas o lugares de las sesiones programadas, asegurando que cualquier modificación sea notificada a los usuarios involucrados.
@@ -729,7 +638,7 @@ PRUEBAS DE ACEPTACIÓN:
 
 ---
 
-### 4.2. Mapa de historias de usuario (opcional)
+## 5. Mapa de historias de usuario
 
 R.G.01. Gestión alumnos
 - R.F.01.1 Creación alumno
@@ -800,124 +709,11 @@ R.G.04. Gestión sesiones
 
 ---
 
-### 4.3. Requisitos no funcionales (opcional)
-
-#### R.N.F.01 Garantía de seguridad
-Como Sensei garantizar la seguridad de los datos de los alumnos, siguiendo los estándares de protección de datos.
-
----
-
--- fin entregable 1 --
-
-## 5. Modelo conceptual
-
-### 5.1. Diagramas de clases UML
+## 6. Modelo conceptual
 
 ![<diagramaUML>](<img/DiagramaUML.drawio.png>)
 
-### 5.2. Escenarios de prueba
-
-- con descripción textual y diagrama de objetos UML.
-
-## 6. Matrices de trazabilidad
-
-- Matriz de trazabilidad entre los elementos del modelo conceptual y los requisitos.
-
-|         | Alumno | Observación | Info Sanitaria | Domicilio | Persona | Tutor Legal | Sensei | Grupo | Pago | Anuncio | Sesión | Asistencia | Grado | 
-|:--------|:-------|:------------|:---------------|:----------|:--------|:------------|:-------|:------|:-----|:--------|:-------|:-----------|:------|
-| RI-1.1  |    X   |             |        X       |     X     |    X    |      X      |        |   X   |      |         |        |            |        |
-| RI-1.2  |        |             |                |           |    X    |      X      |        |       |      |         |        |            |        |
-| RI-1.3  |    X   |             |                |           |         |             |        |   X   |      |         |        |            |        |
-| RI-1.4  |    X   |             |                |           |         |             |        |       |      |         |        |            |    X   |
-| RI-2.1  |    X   |             |                |           |         |             |        |       |   X  |         |        |            |        |
-| RI-3.1  |        |             |                |           |         |             |    X   |       |      |    X    |        |            |        |
-| RI-4.1  |        |             |                |           |         |             |        |   X   |      |         |    X   |            |        |
-| RI-4.2  |    X   |             |                |           |         |             |        |       |      |         |    X   |      X     |        |
-| RF-1.1  |    X   |             |                |           |    X    |      X      |        |       |      |         |        |            |        |
-| RF-1.2  |    X   |             |                |           |         |             |        |       |      |         |        |            |        |
-| RF-1.3  |    X   |             |                |           |         |      X      |        |       |      |         |        |            |        |
-| RF-1.4  |    X   |             |                |           |    X    |             |        |       |      |         |        |            |        |
-| RF-1.5  |    X   |             |                |           |         |             |        |       |      |         |        |            |        |
-| RF-1.6  |    X   |      X      |                |           |         |             |        |   X   |      |         |        |      X     |    X   |
-| RF-1.7  |    X   |             |                |           |         |             |        |   X   |      |         |    X   |      X     |        |
-| RF-1.8  |    X   |             |                |           |         |             |        |       |      |         |        |            |    X   |
-| RF-2.1  |    X   |             |                |           |         |             |        |       |   X  |         |        |            |        |
-| RF-2.2  |    X   |             |                |           |    X    |      X      |        |       |   X  |         |        |            |        |
-| RF-2.3  |        |             |                |           |         |             |        |       |   X  |         |        |            |        |
-| RF-2.4  |        |             |                |           |         |             |        |       |   X  |         |        |            |        |
-| RF-3.1  |        |             |                |           |         |             |    X   |       |      |    X    |        |            |        |
-| RF-3.2  |        |             |                |           |         |             |    X   |       |      |    X    |        |            |        |
-| RF-3.3  |        |             |                |           |         |             |    X   |       |      |    X    |        |            |        |
-| RF-3.4  |        |             |                |           |         |             |    X   |       |      |         |        |            |        |
-| RF-4.1  |        |             |                |           |         |             |        |   X   |      |         |    X   |            |        |
-| RF-4.2  |        |             |                |           |         |             |        |       |      |         |    X   |            |        |
-| RF-4.3  |    X   |             |                |           |         |             |        |   X   |      |         |    X   |      X     |        |
-| RF-4.4  |        |             |                |           |         |             |        |       |      |         |    X   |            |        |
-| RN-1.1  |    X   |             |        X       |     X     |    X    |      X      |        |   X   |      |         |        |            |        |
-| RN-1.2  |    X   |             |        X       |     X     |    X    |      X      |        |   X   |      |         |        |            |        |
-| RN-1.3  |    X   |             |                |           |    X    |             |        |   X   |      |         |        |            |        |
-| RN-1.4  |        |             |                |           |         |             |        |   X   |      |         |        |            |        |
-| RN-1.5  |        |             |                |           |         |             |        |   X   |      |         |        |            |        |
-| RN-1.6  |        |             |                |           |         |             |        |   X   |      |         |        |            |        |
-| RN-1.7  |    X   |             |                |           |         |             |        |       |      |         |        |            |        |
-| RN-1.8  |    X   |             |                |           |         |             |        |       |      |         |        |            |        |
-| RN-1.9  |    X   |             |                |           |         |             |        |       |      |         |        |            |    X   |
-| RN-1.10 |    X   |             |                |           |         |             |        |       |      |         |        |            |    X   |
-| RN-1.11 |        |             |                |           |         |             |        |       |      |         |        |            |    X   |
-| RN-1.12 |        |             |                |           |         |             |        |   X   |      |         |        |            |        |
-| RN-1.13 |    X   |             |                |           |         |             |        |       |      |         |        |            |        |
-| RN-1.14 |        |             |                |           |         |             |        |       |      |         |        |            |    X   |
-| RN-1.15 |        |             |                |           |         |             |        |       |      |         |        |            |    X   |
-| RN-1.16 |    X   |             |                |           |         |             |        |   X   |      |         |        |            |        |
-| RN-1.17 |    X   |             |                |           |         |             |        |   X   |      |         |        |            |        |
-| RN-2.1  |    X   |             |                |           |         |             |        |       |   X  |         |        |            |        |
-| RN-2.2  |        |             |                |           |         |             |        |       |   X  |    X    |        |            |        |
-| RN-2.3  |        |             |                |           |         |             |        |       |   X  |         |        |            |        |
-| RN-2.4  |        |             |                |           |         |             |        |       |   X  |         |        |            |        |
-| RN-3.1  |        |             |                |           |         |             |        |       |      |    X    |        |            |        |
-| RN-3.2  |        |             |                |           |         |             |        |       |      |    X    |        |            |        |
-| RN-3.3  |        |             |                |           |         |             |        |       |      |    X    |        |            |        |
-| RN-3.4  |        |             |                |           |         |             |        |       |      |    X    |        |            |        |
-| RN-4.1  |        |             |                |           |         |             |        |   X   |      |         |    X   |            |        |
-| RN-4.2  |        |             |                |           |         |             |        |       |      |         |    X   |            |        |
-| RN-4.3  |    X   |             |                |           |         |             |        |   X   |      |         |    X   |      X     |        |
-| RN-4.4  |        |             |                |           |         |             |        |       |      |         |    X   |            |        |
-| RN-4.5  |        |             |                |           |         |             |        |   X   |      |         |    X   |            |        |
-
-- Incluir Reglas de negocio — Constraints/Triggers en las matrices de trazabilidad para el entregable 3
-
-|         | RN-1.1  | RN-1.2  | RN-1.3  | RN-1.4  | RN-1.5  | RN-1.6  | RN-1.7  | RN-1.8  | RN-1.9  | RN-1.10 | RN-1.11 | RN-1.12 | RN-1.13 | RN-1.14 | RN-1.15 | RN-1.16 | RN-1.17 | RN-2.1  | RN-2.2  | RN-2.3  | RN-2.4  | RN-3.1  | RN-3.2  | RN-3.3  | RN-3.4  | RN-4.1  | RN-4.2  | RN-4.3  | RN-4.4  | RN-4.5  |
-|:--------|:--------|:--------|:--------|:--------|:--------|:--------|:--------|:--------|:--------|:--------|:--------|:--------|:--------|:--------|:--------|:--------|:--------|:--------|:--------|:--------|:--------|:--------|:--------|:--------|:--------|:--------|:--------|:--------|:--------|:--------|
-c_limite_AlumnosGrupos     |         |         |         |    X    |         |         |         |         |         |         |         |         |         |         |         |         |         |         |         |         |         |         |         |         |         |         |         |         |         |         |
-|    c_categoria_Grupos     |         |         |         |         |         |         |         |         |         |         |         |    X    |         |         |         |         |         |         |         |         |         |         |         |         |         |         |         |         |         |         |
-|    grupos_repetidos     |         |         |         |    X    |         |         |         |         |         |         |         |         |         |         |         |         |         |         |         |         |         |         |         |         |         |         |         |         |         |         |
-|    c_gradoCinturon_Grados     |         |         |         |         |         |         |         |         |         |         |         |         |         |    X    |         |         |         |         |         |         |         |         |         |         |         |         |         |         |         |         |
-|    c_metodoPago_Pagos     |         |         |         |         |         |         |         |         |         |         |         |         |         |         |         |         |         |         |         |     X    |         |         |         |         |         |         |         |         |         |         |
-|    c_financiamiento_Pagos     |         |         |         |         |         |         |         |         |         |         |         |         |         |         |         |         |         |         |         |          |    X    |         |         |         |         |         |         |         |         |         |
-
-
-|         | RN-1.1  | RN-1.2  | RN-1.3  | RN-1.4  | RN-1.5  | RN-1.6  | RN-1.7  | RN-1.8  | RN-1.9  | RN-1.10 | RN-1.11 | RN-1.12 | RN-1.13 | RN-1.14 | RN-1.15 | RN-1.16 | RN-1.17 | RN-2.1  | RN-2.2  | RN-2.3  | RN-2.4  | RN-3.1  | RN-3.2  | RN-3.3  | RN-3.4  | RN-4.1  | RN-4.2  | RN-4.3  | RN-4.4  | RN-4.5  |
-|:--------|:--------|:--------|:--------|:--------|:--------|:--------|:--------|:--------|:--------|:--------|:--------|:--------|:--------|:--------|:--------|:--------|:--------|:--------|:--------|:--------|:--------|:--------|:--------|:--------|:--------|:--------|:--------|:--------|:--------|:--------|
-|    contactoCrearAlumnos     |    X    |         |         |         |         |         |         |         |         |         |         |         |         |         |         |         |         |         |         |         |         |         |         |         |         |         |         |         |         |         |
-|    contactoActualizarAlumnos     |    X    |         |         |         |         |         |         |         |         |         |         |         |         |         |         |         |         |         |         |         |         |         |         |         |         |         |         |         |         |         |
-|    solapeCreacionSesiones     |         |         |         |         |         |         |         |         |         |         |         |         |         |         |         |         |         |         |         |         |         |         |         |         |         |         |         |         |         |    X    |
-|    solapeActualizacionSesiones     |         |         |         |         |         |         |         |         |         |         |         |         |         |         |         |         |         |         |         |         |         |         |         |         |         |         |         |         |         |    X    |
-|    dniCrearAlumno     |    X    |         |         |         |         |         |         |         |         |         |         |         |         |         |         |         |         |         |         |         |         |         |         |         |         |         |         |         |         |         |
-|    dniActualizarAlumno     |    X    |         |         |         |         |         |         |         |         |         |         |         |         |         |         |         |         |         |         |         |         |         |         |         |         |         |         |         |         |         |
-|    proteccionDatos     |    X    |         |         |         |         |         |         |         |         |         |         |         |         |         |         |         |         |         |         |         |         |         |         |         |         |         |         |         |         |         |
-|    creacionAlumnoDosGrupos     |         |         |         |         |         |         |         |         |         |         |         |         |         |         |         |    X    |         |         |         |         |         |         |         |         |         |         |         |         |         |         |
-|    actualizacionAlumnoDosGrupos     |         |         |         |         |         |         |         |         |         |         |         |         |         |         |         |    X    |         |         |         |         |         |         |         |         |         |         |         |         |         |         |
-validarCapacidadGrupoCreacion     |         |         |         |         |         |         |         |         |         |         |         |         |         |         |         |         |    X    |         |         |         |         |         |         |         |         |         |         |         |         |         |
-validarCapacidadGrupoActualizacion     |         |         |         |         |         |         |         |         |         |         |         |         |         |         |         |         |    X    |         |         |         |         |         |         |         |         |         |         |         |         |         |
-grupoAdecuadoCreacion     |         |         |         |         |         |         |         |         |         |         |         |     X    |         |         |         |         |         |         |         |         |         |         |         |         |         |         |         |         |         |         |
-grupoAdecuadoActualizacion     |         |         |         |         |         |         |         |         |         |         |         |     X    |         |         |         |         |         |         |         |         |         |         |         |         |         |         |         |         |         |         |
-|    fechaCreacionGrados     |         |         |         |         |         |         |         |         |    X    |         |         |         |         |         |         |         |         |         |         |         |         |         |         |         |         |         |         |         |         |         |
-|    fechaActualizacionGrados     |         |         |         |         |         |         |         |         |    X    |         |         |         |         |         |         |         |         |         |         |         |         |         |         |         |         |         |         |         |         |         |
-
-
--- fin entregable 2 --
-
-## 7. Modelo relacional en 3FN
+## 7. Modelo relacional
 Alumnos (!alumnoId, razonInscripcion, fechaNacimiento, codigoFederativo, dni, clausulaPDD, personaId @Personas, domicilioId @Domicilios, tutorId @TutoresLegales, grupoIdEntreno @Grupos, grupoIdEspera @Grupos)
 
 Personas (!personaId, teléfono, correo, nombre, apellidos)
@@ -943,9 +739,3 @@ Senseis (!senseiId, personaId @Personas)
 InfosSanitarias (!infoSanitariaId, argumento, alumnoId @Alumnos)
 
 Pagos (!pagoId, cantidad, fecha, metodo, financiamiento, alumnoId @Alumnos)
-
-### 7.1.  Justificación de la estrategia de transformación de jerarquías
-
-- si se identificaron jerarquías en el MC.
-
--- fin entregable 3 --
