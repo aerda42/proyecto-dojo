@@ -8,13 +8,15 @@ DROP TABLE IF EXISTS Pagos;
 DROP TABLE IF EXISTS InfosSanitarias;
 DROP TABLE IF EXISTS Anuncios;
 DROP TABLE IF EXISTS Observaciones;
-DROP TABLE IF EXISTS Senseis;
-DROP TABLE IF EXISTS Grupos;
 DROP TABLE IF EXISTS Asistencias;
 DROP TABLE IF EXISTS Sesiones;
+DROP TABLE IF EXISTS Senseis;
 DROP TABLE IF EXISTS Grados;
-DROP TABLE IF EXISTS TutoresLegales;
+DROP TABLE IF EXISTS AlumnosGrupos;
 DROP TABLE IF EXISTS Alumnos;
+DROP TABLE IF EXISTS Grupos;
+DROP TABLE IF EXISTS Temporadas;
+DROP TABLE IF EXISTS TutoresLegales;
 DROP TABLE IF EXISTS Domicilios;
 DROP TABLE IF EXISTS Personas;
 
@@ -43,6 +45,11 @@ CREATE TABLE TutoresLegales (
     FOREIGN KEY (personaId) REFERENCES Personas(personaId) ON DELETE CASCADE
 );
 
+CREATE TABLE Temporadas (
+    temporadaId INT PRIMARY KEY AUTO_INCREMENT,
+    temporada VARCHAR(9) 
+);
+
 CREATE TABLE Grupos (
     grupoId INT PRIMARY KEY AUTO_INCREMENT,
     nombre VARCHAR(100) NOT NULL UNIQUE,
@@ -50,7 +57,7 @@ CREATE TABLE Grupos (
     categoria VARCHAR(100) NOT NULL CHECK (categoria IN ("Alevín-Infantil", "Juvenil-Adulto")),
     ubicacion VARCHAR(100) NOT NULL,
     precioMes INT NOT NULL,
-    CONSTRAINT grupos_repetidos UNIQUE (nombre,ubicacion)
+    UNIQUE (nombre,ubicacion)
 );
 
 CREATE TABLE Alumnos (
@@ -65,11 +72,18 @@ CREATE TABLE Alumnos (
     personaId INT NOT NULL,
     FOREIGN KEY (personaId) REFERENCES Personas(personaId) ON DELETE CASCADE,
     tutorId INT,
-    FOREIGN KEY (tutorId) REFERENCES TutoresLegales(tutorId),
-    grupoIdEntreno INT,
-    FOREIGN KEY (grupoIdEntreno) REFERENCES Grupos(grupoId),
-    grupoIdEspera INT,
-    FOREIGN KEY (grupoIdEspera) REFERENCES Grupos(grupoId)
+    FOREIGN KEY (tutorId) REFERENCES TutoresLegales(tutorId)
+);
+
+CREATE TABLE AlumnosGrupos (
+    alumnosGruposId INT PRIMARY KEY AUTO_INCREMENT,
+    alumnoId INT NOT NULL,
+    FOREIGN KEY (alumnoId) REFERENCES Alumnos(alumnoId),
+    grupoId INT NOT NULL,
+    FOREIGN KEY (grupoId) REFERENCES Grupos(grupoId),
+    esLista BOOLEAN NOT NULL,
+    temporada INT NOT NULL,
+    FOREIGN KEY (temporada) REFERENCES Temporadas(temporadaId)
 );
 
 CREATE TABLE Grados (
@@ -113,7 +127,9 @@ CREATE TABLE Senseis (
 CREATE TABLE Sesiones (
     sesionId INT PRIMARY KEY AUTO_INCREMENT,
     fechaHora DATETIME NOT NULL,
-    temporada VARCHAR(50),
+    duracionMin INT NOT NULL DEFAULT 60, 
+    temporada INT NOT NULL,
+    FOREIGN KEY (temporada) REFERENCES Temporadas(temporadaId),
     grupoId INT NOT NULL,
     FOREIGN KEY (grupoId) REFERENCES Grupos(grupoId) ON DELETE CASCADE
 );
@@ -259,21 +275,52 @@ BEGIN
     RETURN estado;
 END //
 
+
+-- función obtener temporada
+CREATE FUNCTION getTemporada(
+    IN fecha DATE
+)
+RETURNS VARCHAR(9)
+DETERMINISTIC
+BEGIN
+  DECLARE inicio INT;
+  DECLARE fin INT;
+
+  IF MONTH(fecha) >= 9 THEN
+    SET inicio = YEAR(fecha);
+    SET fin = YEAR(fecha) + 1;
+  ELSE
+    SET inicio = YEAR(fecha) - 1;
+    SET fin = YEAR(fecha);
+  END IF;
+
+  RETURN CONCAT(inicio,'-',fin);
+END //
+
+
 -- función estado alumno
--- activo: si grupoIdEntreno o grupoIdEspera
--- inactivo: si no grupoIdEntreno y no grupoIdEspera
+-- activo: si grupoId en temporada actual
+-- inactivo: si no grupoId en temporada actual
 CREATE OR REPLACE FUNCTION getEstadoAlumno(
-    IN a_grupoIdEntreno INT,
-    IN a_grupoIdEspera INT
+    IN a_id INT,
+    IN g_id INT
 )
 RETURNS VARCHAR(50)
 BEGIN
     DECLARE estado VARCHAR(50);
+    DECLARE a_alumnoId INT;
 
-    IF(a_grupoIdEntreno IS NULL AND a_grupoIdEspera IS NULL) THEN
-        SET estado = 'Inactivo';
-    ELSE
+    SELECT alumnoId
+    INTO a_alumnoId
+    FROM AlumnosGrupos
+    WHERE alumnoId = a_id AND temporada = getTemporada(CURDATE())
+    ORDER BY alumnoId
+    LIMIT 1;
+
+    IF(a_alumnoId = a_id) THEN
         SET estado = 'Activo';
+    ELSE
+        SET estado = 'Inactivo';
     END IF;
 
     RETURN estado;
@@ -292,12 +339,35 @@ BEGIN
     VALUES (p_nombre, p_apellidos, p_telefono, p_correo);
 END //
 
+CREATE OR REPLACE PROCEDURE insertarPersona(
+    IN p_id INT,
+    IN p_nombre VARCHAR(100),
+    IN p_apellidos VARCHAR(100),
+    IN p_correo VARCHAR(255),
+    IN p_telefono INT
+)
+BEGIN
+    INSERT INTO Personas (personaId, nombre, apellidos, telefono, correo)
+    VALUES (p_id, p_nombre, p_apellidos, p_telefono, p_correo);
+END //
+
 
 -- prodecimiento crear domicilio
 CREATE OR REPLACE PROCEDURE insertarDomicilio(
     IN d_direccion VARCHAR(255),
     IN d_municipio VARCHAR(100),
     IN d_cp INT
+)
+BEGIN
+    INSERT INTO Domicilios (direccion, municipio, cp)
+    VALUES (d_direccion, d_municipio, d_cp);
+END //
+
+CREATE OR REPLACE PROCEDURE insertarDomicilio( --- continuar aquí
+    IN d_direccion VARCHAR(255),
+    IN d_municipio VARCHAR(100),
+    IN d_cp INT,
+    IN a_id INT
 )
 BEGIN
     INSERT INTO Domicilios (direccion, municipio, cp)
@@ -629,56 +699,25 @@ BEGIN
 END //
 
 
--- trigger alumnos dos grupos
-CREATE OR REPLACE PROCEDURE alumnoDosGrupos(
-    IN a_grupoIdEntreno INT,
-    IN a_grupoIdEspera INT
-)
-BEGIN
-    IF a_grupoIdEntreno IS NOT NULL AND a_grupoIdEspera IS NOT NULL THEN
-        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Un alumno no puede pertenecer a dos grupos.';
-    END IF;
-END;
-
-CREATE OR REPLACE TRIGGER creacionAlumnoDosGrupos
-BEFORE INSERT ON Alumnos
-FOR EACH ROW
-BEGIN
-    CALL alumnoDosGrupos(
-        NEW.grupoIdEntreno,
-        NEW.grupoIdEspera
-    );
-END //
-
-CREATE OR REPLACE TRIGGER actualizacionAlumnoDosGrupos
-BEFORE UPDATE ON Alumnos
-FOR EACH ROW
-BEGIN
-    CALL alumnoDosGrupos(
-        NEW.grupoIdEntreno,
-        NEW.grupoIdEspera
-    );
-END //
-
-
 -- trigger añadir alumno a grupo completo
 CREATE OR REPLACE PROCEDURE grupoCompleto(
-    IN g_idEntreno INT
+    IN g_id INT,
+    IN temp INT
 )
 BEGIN
     DECLARE alumnosEnGrupo INT;
     DECLARE capacidadMax INT;
 
-    IF g_idEntreno IS NOT NULL THEN
+    IF g_id IS NOT NULL THEN
         SELECT COUNT(*)
         INTO alumnosEnGrupo
-        FROM Alumnos
-        WHERE grupoIdEntreno = g_idEntreno;
+        FROM AlumnosGrupos
+        WHERE grupoId = g_id AND esLista IS FALSE AND temporada = temp;
 
         SELECT limiteAlumnos
         INTO capacidadMax
         FROM Grupos
-        WHERE grupoId = g_idEntreno;
+        WHERE grupoId = g_id;
 
         IF alumnosEnGrupo >= capacidadMax THEN
             SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'El grupo está completo.';
@@ -870,13 +909,11 @@ ORDER BY Personas.personaId, VistaGrados.fechaInicio ASC;
 -- asistencia media de la última temporada
 -- alumnos con valor de asistencia mayor
 CREATE OR REPLACE VIEW asistenciasAlumnos AS
-SELECT Grupos.grupoId, Sesiones.temporada, Alumnos.alumnoId, COUNT(Asistencias.alumnoPresente) as totalAsistencias
+SELECT AlumnosGrupos.grupoId, AlumnosGrupos.temporada, AlumnosGrupos.alumnoId, COUNT(Asistencias.alumnoPresente) as totalAsistencias
 FROM Asistencias
-    JOIN Alumnos ON Asistencias.alumnoId = Alumnos.alumnoId
-    JOIN Sesiones ON Asistencias.sesionId = Sesiones.sesionId
-    JOIN Grupos ON Grupos.grupoId = Sesiones.grupoId
+    JOIN AlumnosGrupos ON AlumnosGrupos.alumnoId = Asistencias.alumnoId
 WHERE Asistencias.alumnoPresente = TRUE 
-GROUP BY Sesiones.temporada, Grupos.grupoId, Alumnos.alumnoId;
+GROUP BY AlumnosGrupos.temporada, AlumnosGrupos.grupoId, AlumnosGrupos.alumnoId;
 
 CREATE OR REPLACE VIEW informeGrupo AS
 SELECT 
