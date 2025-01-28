@@ -32,12 +32,12 @@ CALL insertarAlumnoYPersona(
     1,                          -- a1
     'Alumno1', 
     'Mayor edad correcto', 
-    '00000001A',
+    123456789,
     'correo@gmail.com',
     NULL,
     '1998-12-22',
     NULL,
-    '12345678A',
+    '00000001A',
     TRUE,
     1,                          -- d1
     NULL
@@ -55,15 +55,15 @@ CALL insertarAlumnoYPersona(
     2,                          -- a2
     'Alumno2', 
     'Mayor edad sin telefono',
-    '00000002A',
+    123456789,
     'correo@gmail.com',
     NULL,
-    '2008-10-22',
+    '2000-10-22',
     NULL,
-    '12345678A',
+    '00000002A',
     TRUE,
     2,                          -- d2
-    2                           -- t2
+    NULL
 );
 
 CALL insertarInfoSanitaria(
@@ -77,12 +77,12 @@ CALL insertarAlumnoYPersona(
     3,                          -- a3
     'Alumno3', 
     'Menor edad sin correo', 
-    '00000003A',
+    123456789,
     NULL,
     NULL,
     '2008-10-22',
     NULL,
-    '12345678A',
+    '00000003A',
     TRUE,
     2,                          -- d2
     2                           -- t2
@@ -100,12 +100,12 @@ CALL insertarAlumnoYPersona(
     4,                          -- a4
     'Alumno4', 
     'Menor edad sin telefono y correo', 
+    123456789,
+    NULL,
+    NULL,
+    '2016-10-22',
+    NULL,
     '00000004A',
-    NULL,
-    NULL,
-    '2008-10-22',
-    NULL,
-    '12345678A',
     TRUE,
     3,                          -- d3
     2                           -- t2
@@ -148,7 +148,7 @@ CALL insertarAlumnosGrupos(
     1,                          -- a1
     1,                          -- g1
     FALSE,
-    1                          -- temp 1 (24-25)
+    1                           -- temp 1 (24-25)
 );
 
 CALL insertarAlumnosGrupos(
@@ -156,7 +156,7 @@ CALL insertarAlumnosGrupos(
     2,                          -- a2
     1,                          -- g1
     FALSE,
-    1                          -- temp 1 (24-25)
+    1                           -- temp 1 (24-25)
 );
 
 CALL insertarAlumnosGrupos(
@@ -164,7 +164,7 @@ CALL insertarAlumnosGrupos(
     3,                          -- a3
     2,                          -- g2
     FALSE,
-    1                          -- temp 1 (24-25)
+    1                           -- temp 1 (24-25)
 );
 
 CALL insertarAlumnosGrupos(
@@ -172,7 +172,7 @@ CALL insertarAlumnosGrupos(
     4,                          -- a4
     2,                          -- g2
     FALSE,
-    1                          -- temp 1 (24-25)
+    1                           -- temp 1 (24-25)
 );
 
 CALL insertarGrado(
@@ -258,7 +258,7 @@ CALL insertarAsistencia(
 
 CALL insertarAsistencia(
     NULL,
-    TRUE,
+    FALSE,
     3,                         -- a3
     3                          -- s3
 );

@@ -1,107 +1,293 @@
--- probar triggers
-CALL insertarPersona("alumno1","trigger","correo@gmail.com",123456789); -- P8, A5
-CALL insertarPersona("tutor1","trigger","correo@gmail.com",123456789); -- P9, T3
-CALL insertarTutorLegal(NULL,"Padre de alumno1,alumno3",8);
-CALL insertarPersona("alumno2","trigger","correo@gmail.com",123456789); -- P10, A6
-CALL insertarPersona("alumno3","trigger","correo@gmail.com",123456789); -- P11, A7
-CALL insertarPersona("alumno4","trigger","correo@gmail.com",123456789); -- P12, A8
-CALL insertarPersona("tutor2,alumno6","trigger","correo@gmail.com",NULL); -- P13, T4, A9
-CALL insertarTutorLegal(NULL,"Padre de alumno5",13);
-CALL insertarPersona("alumno5","trigger",NULL,123456789); -- P14, A10
-CALL insertarPersona("tutor3,alumno7","trigger","correo@gmail.com",NULL); -- P15, T5, A11
-CALL insertarTutorLegal(NULL,"Padre de alumno7",15);
-
--- probar trigger informacion contacto (añadir respectivos personas, alumnos, tutores)
+-- trigger información contacto
 -- alumno menor de edad con tutor con teléfono y correo
-CALL insertarAlumno(NULL,'2005-05-05',NULL,'12345678A',TRUE,7,1,3,NULL,NULL);
+CALL insertarAlumnoYPersona(
+    8,                          -- p8
+    5,                          -- a5
+    'Alumno5', 
+    'trigger', 
+    123456789,
+    'correo@gmail.com',
+    NULL,
+    '2010-05-05',
+    NULL,
+    '00000005A',
+    TRUE,
+    1,                          -- d1
+    2                           -- t2
+);
 -- alumno mayor edad con teléfono y correo
-CALL insertarAlumno(NULL,'2000-01-01',NULL,'22345678A',TRUE,9,1,NULL,NULL,NULL);
--- alumno mayor edad con tutor
-CALL insertarAlumno(NULL,'2000-01-01',NULL,'32345678A',TRUE,10,1,3,NULL,NULL);
 -- alumno mayor edad sin tutor
-CALL insertarAlumno(NULL,'2000-01-01',NULL,'42345678A',TRUE,11,1,NULL,NULL,NULL);
+CALL insertarAlumnoYPersona(
+    9,                          -- p9
+    6,                          -- a6
+    'Alumno6', 
+    'trigger', 
+    123456789,
+    'correo@gmail.com',
+    NULL,
+    '2005-05-05',
+    NULL,
+    '00000006A',
+    TRUE,
+    1,                          -- d1
+    NULL
+);
+-- alumno mayor edad con tutor
+CALL insertarAlumnoYPersona(
+    10,                         -- p10
+    7,                          -- a7
+    'Alumno7', 
+    'trigger', 
+    123456789,
+    'correo@gmail.com',
+    NULL,
+    '2010-05-05',
+    NULL,
+    '00000007A',
+    TRUE,
+    1,                          -- d1
+    2                           -- t2
+);
+
 -- FALLOS:
+
 -- alumno menor de edad con tutor sin teléfono
-CALL insertarAlumno(NULL,'2010-05-05',NULL,'724465478A',TRUE,15,1,4,NULL,NULL);
+CALL insertarAlumnoYPersona(
+    11,                         -- p11
+    8,                          -- a8
+    'Alumno8', 
+    'triggerF', 
+    123456789,
+    'correo@gmail.com',
+    NULL,
+    '2010-05-05',
+    NULL,
+    '00000008A',
+    TRUE,
+    1,                          -- d1
+    1                           -- t1
+);
 -- alumno menor de edad con tutor sin correo
-CALL insertarAlumno(NULL,'2010-05-05',NULL,'44571912A',TRUE,14,1,5,NULL,NULL);
+CALL insertarTutorLegalYPersona(
+    12,                         -- p12
+    3,                          -- t3
+    'Tutor legal3', 
+    'trigger',
+    123456789, 
+    NULL,
+    NULL,
+    'Padre'
+);
+CALL insertarAlumnoYPersona(
+    13,                         -- p13
+    9,                          -- a9
+    'Alumno9', 
+    'triggerF', 
+    123456789,
+    'correo@gmail.com',
+    NULL,
+    '2010-05-05',
+    NULL,
+    '00000009A',
+    TRUE,
+    1,                          -- d1
+    3                           -- t3
+);
 -- alumno menor de edad sin tutor
-CALL insertarAlumno(NULL,'2010-05-05',NULL,'72645678A',TRUE,13,1,NULL,NULL,NULL);
+CALL insertarAlumnoYPersona(
+    14,                         -- p14
+    10,                         -- a10
+    'Alumno7', 
+    'triggerF', 
+    123456789,
+    'correo@gmail.com',
+    NULL,
+    '2010-05-05',
+    NULL,
+    '00000010A',
+    TRUE,
+    1,                          -- d1
+    NULL
+);
 -- alumno mayor de edad sin telefono
-CALL insertarAlumno(NULL,'2005-05-05',NULL,'84899288A',TRUE,15,1,NULL,NULL,NULL);
+CALL insertarAlumnoYPersona(
+    15,                         -- p15
+    11,                         -- a11
+    'Alumno11', 
+    'triggerF', 
+    NULL,
+    'correo@gmail.com',
+    NULL,
+    '2005-05-05',
+    NULL,
+    '00000011A',
+    TRUE,
+    1,                          -- d1
+    2                           -- t2
+);
 -- alumno mayor de edad sin correo
-CALL insertarAlumno(NULL,'2005-05-05',NULL,'94816211A',TRUE,14,1,NULL,NULL,NULL);
+CALL insertarAlumnoYPersona(
+    16,                         -- p16
+    12,                         -- a12
+    'Alumno12', 
+    'triggerF', 
+    123456789,
+    NULL,
+    NULL,
+    '2005-05-05',
+    NULL,
+    '00000012A',
+    TRUE,
+    1,                          -- d1
+    NULL
+);
 
 
--- probar trigger solape sesiones (añadir respectivos grupos, sesiones)
--- dos sesiones con distinta fechaHora y ubicación
-CALL insertarGrupo('Grupo C', 'Gines', 'Juvenil-Adulto', 15, 60); -- G3
-CALL insertarSesion('2024-12-06 10:00:00', '2024/25', 1); -- G1, S4
-CALL insertarSesion('2024-12-07 10:00:00', '2024/25', 3); -- G3, S5
--- dos sesiones con misma fechaHora y distinta ubicación
-CALL insertarGrupo('Grupo D', 'Gines', 'Juvenil-Adulto', 15, 60); -- G4
-CALL insertarSesion('2024-12-08 10:00:00', '2024/25', 1); -- G1, S6
-CALL insertarSesion('2024-12-08 10:00:00', '2024/25', 4); -- G4, S7
--- dos sesiones con distinta fechaHora y misma ubicación
-CALL insertarSesion('2024-07-20 10:00:00', '2024/25', 1); -- G1, S8
-CALL insertarSesion('2024-08-20 10:00:00', '2024/25', 2); -- G2, S9
--- FALLOS:
--- dos sesiones con misma fechaHora y ubicación
-CALL insertarSesion('2024-12-10 10:00:00', '2024/25', 3); -- G3, S10
-CALL insertarSesion('2024-12-10 10:00:00', '2024/25', 4); -- G4, S10
-
-
--- probar trigger dni alumno (añadir respectivos personas, alumnos)
+-- trigger dni
 -- alumno <14 con dni
-CALL insertarPersona("alumno6","trigger","correo@gmail.com",123456789); -- P15, A12, T1
-CALL insertarAlumno(NULL,'2011-05-05',NULL,'11345678A',TRUE,15,1,1,NULL,NULL);
-CALL insertarTutorLegal(NULL, "Padre", 15);
+CALL insertarAlumnoYPersona(
+    16,                         -- p16
+    13,                         -- a13
+    'Alumno13', 
+    'trigger', 
+    123456789,
+    'correo@gmail.com',
+    NULL,
+    '2016-05-05',
+    NULL,
+    '00000013A',
+    TRUE,
+    1,                          -- d1
+    2                           -- t2
+);
 -- alumno >=14 con dni
-CALL insertarPersona("alumno7","trigger","correo@gmail.com",123456789); -- P9, A6
-CALL insertarAlumno(NULL,'2005-05-05',NULL,'13345678A',TRUE,9,1,NULL,NULL,NULL);
+CALL insertarAlumnoYPersona(
+    17,                         -- p17
+    14,                         -- a14
+    'Alumno14', 
+    'trigger', 
+    123456789,
+    'correo@gmail.com',
+    NULL,
+    '2005-05-05',
+    NULL,
+    '00000014A',
+    TRUE,
+    1,                          -- d1
+    2                           -- t2
+);
+
 -- FALLOS:
+
 -- alumno >14 sin dni
-CALL insertarPersona("alumno8","trigger","correo@gmail.com",123456789);
-CALL insertarAlumno(NULL,'2000-05-05',NULL,NULL,TRUE,17,1,1,NULL,NULL);
+CALL insertarAlumnoYPersona(
+    18,                         -- p18
+    15,                         -- a15
+    'Alumno15', 
+    'triggerF', 
+    123456789,
+    'correo@gmail.com',
+    NULL,
+    '2005-05-05',
+    NULL,
+    NULL,
+    TRUE,
+    1,                          -- d1
+    NULL
+);
 
 
--- probar trigger cpd (añadir respectivos personas, alumnos)
+-- trigger cláusula de protección de datos
 -- alumno con cpd a true
-CALL insertarPersona("alumno9","trigger","correo@gmail.com",123456789); -- P8, A5
-CALL insertarAlumno(NULL,'2005-05-05',NULL,'14345678A',TRUE,8,1,NULL,NULL,NULL);
+CALL insertarAlumnoYPersona(
+    19,                         -- p19
+    16,                         -- a16
+    'Alumno16', 
+    'trigger', 
+    123456789,
+    'correo@gmail.com',
+    NULL,
+    '2005-05-05',
+    NULL,
+    '00000016A',
+    TRUE,
+    1,                          -- d1
+    NULL
+);
+
 -- FALLOS:
+
 -- alumno con cpd a false
-CALL insertarPersona("alumno10","trigger","correo@gmail.com",123456789);
-CALL insertarAlumno(NULL,'2005-05-05',NULL,'14345678A',FALSE,9,1,NULL,NULL,NULL);
+CALL insertarAlumnoYPersona(
+    20,                         -- p20
+    17,                         -- a17
+    'Alumno17', 
+    'trigger', 
+    123456789,
+    'correo@gmail.com',
+    NULL,
+    '2005-05-05',
+    NULL,
+    '00000017A',
+    TRUE,
+    1,                          -- d1
+    NULL
+);
 
 
--- probar trigger dos grupos (añadir respectivos personas, grupos)
-CALL insertarGrupo('Grupo E', 'Gines', 'Juvenil-Adulto', 15, 60);
--- alumno con grupoEntreno y sin grupoEspera
-CALL insertarPersona("alumno11","trigger","correo@gmail.com",123456789); -- P8, A5
-CALL insertarAlumno(NULL,'2005-05-05',NULL,'15345678A',TRUE,8,1,NULL,3,NULL);
--- alumno sin grupoEntreno y con grupoEspera
-CALL insertarPersona("alumno12","trigger","correo@gmail.com",123456789); -- P9, A6
-CALL insertarAlumno(NULL,'2005-05-05',NULL,'16345678A',TRUE,9,1,NULL,NULL,3);
--- alumno sin grupoEntreno y grupoEspera
-CALL insertarPersona("alumno13","trigger","correo@gmail.com",123456789); -- P10, A7
-CALL insertarAlumno(NULL,'2005-05-05',NULL,'17345678A',TRUE,10,1,NULL,NULL,NULL);
--- FALLOS:
--- alumno con grupoEntreno y grupoEspera
-CALL insertarPersona("alumno14","trigger","correo@gmail.com",123456789);
-CALL insertarAlumno(NULL,'2005-05-05',NULL,'18345678A',TRUE,11,1,NULL,3,3);
-
-
--- probar trigger grupo completo (añadir respectivos personas, alumnos, grupos)
-CALL insertarGrupo('Grupo F', 'Gines', 'Juvenil-Adulto', 1, 60);
+-- trigger grupo completo
 -- alumno a grupo con espacio
-CALL insertarPersona("alumno15","trigger","correo@gmail.com",123456789); -- P8, A5
-CALL insertarAlumno(NULL,'2005-05-05',NULL,'19345678A',TRUE,8,1,NULL,3,NULL);
--- FALLOS:
--- alumno a grupo completo
-CALL insertarPersona("alumno16","trigger","correo@gmail.com",123456789);
-CALL insertarAlumno(NULL,'2005-05-05',NULL,'11145678A',TRUE,9,1,NULL,3,NULL);
+CALL insertarAlumnosGrupos(
+    NULL,
+    3,                          -- a3
+    1,                          -- g1
+    FALSE,
+    1                           -- temp 1 (24-25)
+);
 
+-- FALLOS:
+
+-- alumno a grupo completo
+CALL insertarAlumnosGrupos(
+    NULL,
+    1,                          -- a1
+    2,                          -- g2
+    FALSE,
+    1                           -- temp 1 (24-25)
+);
+
+
+-- trigger grupo adecuado
+CALL insertarGrupo(
+    3,                          -- g3
+    'Grupo Juvenil-Adulto',
+    'Sevilla',
+    'Juvenil-Adulto',
+    30,
+    60
+);
+CALL insertarGrupo(
+    4,                          -- g4
+    'Grupo Alevín-Infantil',
+    'Sevilla',
+    'Alevín-Infantil',
+    30,
+    60
+);
+-- alumno <13 en grupo entreno Alevín-Infantil
+-- alumno >=13 en grupo entreno Juvenil-Adulto
+-- alumno <13 en grupo espera Alevín-Infantil
+-- alumno >=13 en grupo espera Juvenil-Adulto
+
+-- FALLOS:
+
+-- alumno <13 en grupo entreno Juvenil-Adulto
+-- alumno >=13 en grupo entreno Alevín-Infantil
+-- alumno <13 en grupo espera Juvenil-Adulto
+-- alumno >=13 en grupo espera Alevín-Infantil
+
+
+-------------------------
 
 -- probar trigger grupo adecuado (añadir respectivos personas, alumnos, grupos)
 CALL insertarGrupo('Grupo G', 'Sevilla', 'Juvenil-Adulto', 30, 60);
