@@ -329,66 +329,104 @@ END //
 
 -- procedimiento crear personas
 CREATE OR REPLACE PROCEDURE insertarPersona(
+    IN p_id INT DEFAULT NULL,
     IN p_nombre VARCHAR(100),
     IN p_apellidos VARCHAR(100),
     IN p_correo VARCHAR(255),
     IN p_telefono INT
 )
 BEGIN
-    INSERT INTO Personas (nombre, apellidos, telefono, correo)
-    VALUES (p_nombre, p_apellidos, p_telefono, p_correo);
-END //
-
-CREATE OR REPLACE PROCEDURE insertarPersona(
-    IN p_id INT,
-    IN p_nombre VARCHAR(100),
-    IN p_apellidos VARCHAR(100),
-    IN p_correo VARCHAR(255),
-    IN p_telefono INT
-)
-BEGIN
-    INSERT INTO Personas (personaId, nombre, apellidos, telefono, correo)
-    VALUES (p_id, p_nombre, p_apellidos, p_telefono, p_correo);
+    IF p_id IS NULL THEN
+        INSERT INTO Personas (nombre, apellidos, telefono, correo)
+        VALUES (p_nombre, p_apellidos, p_telefono, p_correo);
+    ELSE
+        INSERT INTO Personas (personaId, nombre, apellidos, telefono, correo)
+        VALUES (p_id, p_nombre, p_apellidos, p_telefono, p_correo);
+    END IF;
 END //
 
 
 -- prodecimiento crear domicilio
 CREATE OR REPLACE PROCEDURE insertarDomicilio(
+    IN d_id INT DEFAULT NULL,
     IN d_direccion VARCHAR(255),
     IN d_municipio VARCHAR(100),
     IN d_cp INT
 )
 BEGIN
-    INSERT INTO Domicilios (direccion, municipio, cp)
-    VALUES (d_direccion, d_municipio, d_cp);
-END //
-
-CREATE OR REPLACE PROCEDURE insertarDomicilio( --- continuar aquí
-    IN d_direccion VARCHAR(255),
-    IN d_municipio VARCHAR(100),
-    IN d_cp INT,
-    IN a_id INT
-)
-BEGIN
-    INSERT INTO Domicilios (direccion, municipio, cp)
-    VALUES (d_direccion, d_municipio, d_cp);
+    IF d_id IS NULL THEN
+        INSERT INTO Domicilios (direccion, municipio, cp)
+        VALUES (d_direccion, d_municipio, d_cp);
+    ELSE
+        INSERT INTO Domicilios (domicilioId, direccion, municipio, cp)
+        VALUES (d_ip, d_direccion, d_municipio, d_cp);
+    END IF;
 END //
 
 
 -- prodecimiento crear tutor legal
 CREATE OR REPLACE PROCEDURE insertarTutorLegal(
+    IN t_id INT DEFAULT NULL,
     IN t_correoAlternativo VARCHAR(255),
     IN t_parentesco VARCHAR(50),
     IN t_personaId INT
 )
 BEGIN
-    INSERT INTO TutoresLegales (correoAlternativo, parentesco, personaId)
-    VALUES (t_correoAlternativo, t_parentesco, t_personaId);
+    IF t_id IS NULL THEN
+        INSERT INTO TutoresLegales (correoAlternativo, parentesco, personaId)
+        VALUES (t_correoAlternativo, t_parentesco, t_personaId);
+    ELSE
+        INSERT INTO TutoresLegales (tutorId, correoAlternativo, parentesco, personaId)
+        VALUES (t_id, t_correoAlternativo, t_parentesco, t_personaId);
+    END IF;
+END //
+
+CREATE OR REPLACE PROCEDURE insertarTutorLegalYPersona(
+    IN p_id INT DEFAULT NULL,
+    IN t_id INT DEFAULT NULL,
+    IN p_nombre VARCHAR(100),
+    IN p_apellidos VARCHAR(100),
+    IN p_telefono INT,
+    IN p_correo VARCHAR(255),
+    IN t_correoAlternativo VARCHAR(255),
+    IN t_parentesco VARCHAR(50)
+)
+BEGIN
+    CALL insertarPersona(
+       p_id,
+       p_nombre,
+       p_apellidos,
+       p_correo,
+       p_telefono
+    );
+    CALL insertarTutorLegal(
+        t_id,
+        t_correoAlternativo,
+        t_parentesco,
+        LAST_INSERT_ID()
+    );
+END //
+
+
+-- procedimiento crear temporada
+CREATE OR REPLACE PROCEDURE insertarTemporada(
+    IN t_id INT DEFAULT NULL,
+    IN temp VARCHAR(9)
+)
+BEGIN
+    IF t_id IS NULL THEN
+        INSERT INTO Temporadas(temporada)
+        VALUES(temp);
+    ELSE
+        INSERT INTO Temporadas(temporadaId, temporada)
+        VALUES(t_id, temp);
+    END IF;
 END //
 
 
 -- procedimiento crear grupo
 CREATE OR REPLACE PROCEDURE insertarGrupo(
+    IN g_id INT DEFAULT NULL,
     IN g_nombre VARCHAR(100),
     IN g_ubicacion VARCHAR(100),
     IN g_categoria VARCHAR(100),
@@ -396,13 +434,19 @@ CREATE OR REPLACE PROCEDURE insertarGrupo(
     IN g_precioMes INT
 )
 BEGIN
-    INSERT INTO Grupos(nombre, ubicacion, categoria, limiteAlumnos, precioMes)
-    VALUES (g_nombre, g_ubicacion, g_categoria, g_limiteAlumnos, g_precioMes);
+    IF g_Id is NULL THEN
+        INSERT INTO Grupos(nombre, ubicacion, categoria, limiteAlumnos, precioMes)
+        VALUES (g_nombre, g_ubicacion, g_categoria, g_limiteAlumnos, g_precioMes);
+    ELSE
+        INSERT INTO Grupos(grupoId, nombre, ubicacion, categoria, limiteAlumnos, precioMes)
+        VALUES (g_id, g_nombre, g_ubicacion, g_categoria, g_limiteAlumnos, g_precioMes);
+    end if;
 END //
 
 
 -- procedimiento crear alumno
 CREATE OR REPLACE PROCEDURE insertarAlumno(
+    IN a_id INT DEFAULT NULL,
     IN a_razonInscripcion TEXT,
     IN a_fechaNacimiento DATE,
     IN a_codigoFederativo INT,
@@ -410,18 +454,77 @@ CREATE OR REPLACE PROCEDURE insertarAlumno(
     IN a_clausulaPDD BOOLEAN,
     IN a_personaId INT,
     IN a_domicilioId INT,
-    IN a_tutorId INT,
-    IN a_grupoIdEntreno INT,
-    IN a_grupoIdEspera INT
+    IN a_tutorId INT
 )
 BEGIN
-    INSERT INTO Alumnos (razonInscripcion, fechaNacimiento, codigoFederativo, dni, clausulaPDD, personaId, domicilioId, tutorId, grupoIdEntreno, grupoIdEspera)
-    VALUES (a_razonInscripcion, a_fechaNacimiento, a_codigoFederativo, a_dni, a_clausulaPDD, a_personaId, a_domicilioId, a_tutorId, a_grupoIdEntreno, a_grupoIdEspera);
+    IF a_id IS NULL THEN
+        INSERT INTO Alumnos (razonInscripcion, fechaNacimiento, codigoFederativo, dni, clausulaPDD, personaId, domicilioId, tutorId)
+        VALUES (a_razonInscripcion, a_fechaNacimiento, a_codigoFederativo, a_dni, a_clausulaPDD, a_personaId, a_domicilioId, a_tutorId);
+    ELSE
+        INSERT INTO Alumnos (alumnoId, razonInscripcion, fechaNacimiento, codigoFederativo, dni, clausulaPDD, personaId, domicilioId, tutorId)
+        VALUES (a_id, a_razonInscripcion, a_fechaNacimiento, a_codigoFederativo, a_dni, a_clausulaPDD, a_personaId, a_domicilioId, a_tutorId);
+    END IF;
+END //
+
+CREATE OR REPLACE PROCEDURE insertarAlumnoYPersona(
+    IN p_id INT DEFAULT NULL,
+    IN a_id INT DEFAULT NULL,
+    IN p_nombre VARCHAR(100),
+    IN p_apellidos VARCHAR(100),
+    IN p_telefono INT,
+    IN p_correo VARCHAR(255),
+    IN a_razonInscripcion TEXT,
+    IN a_fechaNacimiento DATE,
+    IN a_codigoFederativo INT,
+    IN a_dni VARCHAR(15),
+    IN a_clausulaPDD BOOLEAN,
+    IN a_domicilioId INT,
+    IN a_tutorId INT
+)
+BEGIN
+    CALL insertarPersona(
+       p_id,
+       p_nombre,
+       p_apellidos,
+       p_correo,
+       p_telefono
+    );
+    CALL insertarAlumno(
+        a_id, 
+        a_razonInscripcion, 
+        a_fechaNacimiento, 
+        a_codigoFederativo, 
+        a_dni, 
+        a_clausulaPDD, 
+        LAST_INSERT_ID(), 
+        a_domicilioId, 
+        a_tutorId
+    );
+END //
+
+
+-- procedimiento crear alumnosgrupos
+CREATE OR REPLACE PROCEDURE insertarAlumnosGrupos(
+    IN a_id INT DEFAULT NULL,
+    IN a_alumnoId INT,
+    IN a_grupoId INT,
+    IN a_esLista BOOLEAN,
+    IN a_temporada INT
+)
+BEGIN
+    IF a_id IS NULL THEN
+        INSERT INTO AlumnosGrupos(alumnoId, grupoId, esLista, temporada)
+        VALUES (a_alumnoId, a_grupoId, a_esLista, a_temporada);
+    ELSE
+        INSERT INTO AlumnosGrupos(alumnosGruposId, alumnoId, grupoId, esLista, temporada)
+        VALUES (a_id, a_alumnoId, a_grupoId, a_esLista, a_temporada);
+    END IF;
 END //
 
 
 -- procedimiento crear grado
 CREATE OR REPLACE PROCEDURE insertarGrado(
+    IN g_id INT DEFAULT NULL,
     IN g_gradoCinturon VARCHAR(50),
     IN g_fechaInicio DATE,
     IN g_fechaLicencia DATE,
@@ -429,84 +532,149 @@ CREATE OR REPLACE PROCEDURE insertarGrado(
     IN g_alumnoId INT
 )
 BEGIN
-    INSERT INTO Grados(gradoCinturon, fechaInicio, fechaFin, fechaLicencia, alumnoId)
-    VALUES (g_gradoCinturon, g_fechaInicio, g_fechaFin, g_fechaLicencia, g_alumnoId);
+    IF g_id IS NULL THEN
+        INSERT INTO Grados(gradoCinturon, fechaInicio, fechaFin, fechaLicencia, alumnoId)
+        VALUES (g_gradoCinturon, g_fechaInicio, g_fechaFin, g_fechaLicencia, g_alumnoId);
+    ELSE
+        INSERT INTO Grados(gradoId, gradoCinturon, fechaInicio, fechaFin, fechaLicencia, alumnoId)
+        VALUES (g_id, g_gradoCinturon, g_fechaInicio, g_fechaFin, g_fechaLicencia, g_alumnoId);
+    END IF;
 END //
 
 
 -- procedimiento crear sensei
 CREATE OR REPLACE PROCEDURE insertarSensei(
+    IN s_id INT DEFAULT NULL,
     IN s_personaId INT
 )
 BEGIN
-    INSERT INTO Senseis(personaId)
-    VALUES (s_personaId);
+    IF s_id IS NULL THEN
+        INSERT INTO Senseis(personaId)
+        VALUES (s_personaId);
+    ELSE
+        INSERT INTO Senseis(senseiId, personaId)
+        VALUES (s_id, s_personaId);
+    END IF;
+END //
+
+CREATE OR REPLACE PROCEDURE insertarSenseiYPersona(
+    IN p_id INT DEFAULT NULL,
+    IN s_id INT DEFAULT NULL,
+    IN p_nombre VARCHAR(100),
+    IN p_apellidos VARCHAR(100),
+    IN p_telefono INT,
+    IN p_correo VARCHAR(255)
+)
+BEGIN
+    CALL insertarPersona(
+       p_id,
+       p_nombre,
+       p_apellidos,
+       p_correo,
+       p_telefono
+    );
+    CALL insertarSensei(
+        s_id,
+        LAST_INSERT_ID()
+    );
 END //
 
 
 -- procedimiento crear sesiones
 CREATE OR REPLACE PROCEDURE insertarSesion(
+    IN s_id INT DEFAULT NULL,
     IN s_fechaHora DATE,
-    IN s_temporada VARCHAR(50),
+    IN s_duracion INT,
+    IN s_temporada INT,
     IN s_grupoId INT
 )
 BEGIN
-    INSERT INTO Sesiones(fechaHora, temporada, grupoId)
-    VALUES (s_fechaHora, s_temporada, s_grupoId);
+    IF s_id IS NULL THEN
+        INSERT INTO Sesiones(fechaHora, duracionMin, temporada, grupoId)
+        VALUES (s_fechaHora, s_duracion, s_temporada, s_grupoId);
+    ELSE
+        INSERT INTO Sesiones(sesionId, fechaHora, duracionMin, temporada, grupoId)
+        VALUES (s_id, s_fechaHora, s_duracion, s_temporada, s_grupoId);
+    END IF;
 END //
 
 
 -- procedimiento crear asistencias
 CREATE OR REPLACE PROCEDURE insertarAsistencia(
+    IN a_id INT DEFAULT NULL,
     IN a_alumnoPresente BOOLEAN,
     IN a_alumnoId INT,
     IN a_sesionId INT
 )
 BEGIN
-    INSERT INTO Asistencias(alumnoPresente, alumnoId, sesionId)
-    VALUES (a_alumnoPresente, a_alumnoId, a_sesionId);
+    IF a_id IS NULL THEN
+        INSERT INTO Asistencias(alumnoPresente, alumnoId, sesionId)
+        VALUES (a_alumnoPresente, a_alumnoId, a_sesionId);
+    ELSE
+        INSERT INTO Asistencias(asistenciaId, alumnoPresente, alumnoId, sesionId)
+        VALUES (a_id, a_alumnoPresente, a_alumnoId, a_sesionId);
+    END IF;
 END //
 
 
 -- procedimiento crear observaciones
 CREATE OR REPLACE PROCEDURE insertarObservacion(
+    IN o_id INT DEFAULT NULL,
     IN o_fecha DATE,
     IN o_argumento VARCHAR(100),
     IN o_alumnoId INT,
     IN o_senseiId INT
 )
 BEGIN
-    INSERT INTO Observaciones(fecha, argumento, alumnoId, senseiId)
-    VALUES (o_fecha, o_argumento, o_alumnoId, o_senseiId);
+    IF o_id IS NULL THEN
+        INSERT INTO Observaciones(fecha, argumento, alumnoId, senseiId)
+        VALUES (o_fecha, o_argumento, o_alumnoId, o_senseiId);
+    ELSE
+        INSERT INTO Observaciones(observacionId, fecha, argumento, alumnoId, senseiId)
+        VALUES (o_id, o_fecha, o_argumento, o_alumnoId, o_senseiId);
+    END IF;
 END //
 
 
 -- procedimiento crear anuncios
 CREATE OR REPLACE PROCEDURE insertarAnuncio(
+    IN a_id INT DEFAULT NULL,
     IN a_asunto VARCHAR(255),
     IN a_fechaHora DATE,
     IN a_descripcion TEXT,
     IN a_senseiId INT
 )
 BEGIN
-    INSERT INTO Anuncios(asunto, fechaHora, descripcion, senseiId)
-    VALUES (a_asunto, a_fechaHora, a_descripcion, a_senseiId);
+    IF a_id IS NULL THEN
+        INSERT INTO Anuncios(asunto, fechaHora, descripcion, senseiId)
+        VALUES (a_asunto, a_fechaHora, a_descripcion, a_senseiId);
+    ELSE
+        INSERT INTO Anuncios(anuncioId, asunto, fechaHora, descripcion, senseiId)
+        VALUES (a_id, a_asunto, a_fechaHora, a_descripcion, a_senseiId);
+    END IF;
 END //
 
 
 -- procedimiento crear info sanitarias
 CREATE OR REPLACE PROCEDURE insertarInfoSanitaria(
+    IN i_id INT DEFAULT NULL,
     IN i_argumento TEXT,
     IN i_alumnoId INT
 )
 BEGIN
-    INSERT INTO InfosSanitarias(argumento, alumnoId)
-    VALUES (i_argumento, i_alumnoId);
+    IF i_id IS NULL THEN
+        INSERT INTO InfosSanitarias(argumento, alumnoId)
+        VALUES (i_argumento, i_alumnoId);
+    ELSE 
+        INSERT INTO InfosSanitarias(infoSanitariaId, argumento, alumnoId)
+        VALUES (i_id, i_argumento, i_alumnoId);
+    END IF;
 END //
 
 
 -- procedimiento crear pagos
 CREATE OR REPLACE PROCEDURE insertarPago(
+    IN p_id INT DEFAULT NULL,
     IN p_cantidad DECIMAL(5,2),
     IN p_fecha DATE,
     IN p_metodo VARCHAR(20),
@@ -514,8 +682,13 @@ CREATE OR REPLACE PROCEDURE insertarPago(
     in p_alumnoId INT
 )
 BEGIN
-    INSERT INTO Pagos(cantidad, fecha, metodo, financiamiento, alumnoId)
-    VALUES (p_cantidad, p_fecha, p_metodo, p_financiamiento, p_alumnoId);
+    IF p_id IS NULL THEN
+        INSERT INTO Pagos(cantidad, fecha, metodo, financiamiento, alumnoId)
+        VALUES (p_cantidad, p_fecha, p_metodo, p_financiamiento, p_alumnoId);
+    ELSE
+        INSERT INTO Pagos(pagoId,cantidad, fecha, metodo, financiamiento, alumnoId)
+        VALUES (p_id, p_cantidad, p_fecha, p_metodo, p_financiamiento, p_alumnoId);
+    END IF;
 END //
 
 
@@ -602,54 +775,6 @@ BEGIN
 END //
 
 
--- trigger solape sesiones
--- fechaHora y ubicacion
-CREATE OR REPLACE PROCEDURE sesionesSolapadas(
-    IN s_fechaHora DATETIME,
-    IN s_grupoId INT
-)
-BEGIN
-    DECLARE sesionesCoincidentes INT DEFAULT 0;
-    DECLARE s_ubicacion VARCHAR(100);
-
-    SELECT Grupos.ubicacion
-    INTO s_ubicacion
-    FROM Grupos
-    WHERE Grupos.grupoId = s_grupoId;
-
-    SELECT COUNT(*)
-    INTO sesionesCoincidentes
-    FROM Sesiones
-    JOIN Grupos ON Grupos.grupoId = Sesiones.grupoId
-    WHERE Grupos.ubicacion = s_ubicacion
-      AND Sesiones.fechaHora = s_fechaHora;
-
-    IF sesionesCoincidentes > 0 THEN
-        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Ya existe una sesión programada en esta ubicación y hora.';
-    END IF;
-END;
-
-CREATE OR REPLACE TRIGGER solapeCreacionSesiones
-BEFORE INSERT ON Sesiones
-FOR EACH ROW
-BEGIN
-    CALL sesionesSolapadas(
-        NEW.fechaHora,
-        NEW.grupoId
-    );
-END //
-
-CREATE OR REPLACE TRIGGER solapeActualizacionSesiones
-BEFORE UPDATE ON Sesiones
-FOR EACH ROW
-BEGIN
-    CALL sesionesSolapadas(
-        NEW.fechaHora,
-        NEW.grupoId
-    );
-END //
-
-
 -- trigger dni
 -- dni a null si alumno <14
 CREATE OR REPLACE PROCEDURE dniObligatorio(
@@ -726,17 +851,17 @@ BEGIN
 END;
 
 CREATE OR REPLACE TRIGGER validarCapacidadGrupoCreacion
-BEFORE INSERT ON Alumnos
+BEFORE INSERT ON AlumnosGrupos
 FOR EACH ROW
 BEGIN
-    CALL grupoCompleto(NEW.grupoIdEntreno);
+    CALL grupoCompleto(NEW.grupoId, NEW.temporada);
 END //
 
 CREATE OR REPLACE TRIGGER validarCapacidadGrupoActualizacion
-BEFORE UPDATE ON Alumnos
+BEFORE UPDATE ON AlumnosGrupos
 FOR EACH ROW
 BEGIN
-    CALL grupoCompleto(NEW.grupoIdEntreno);
+    CALL grupoCompleto(NEW.grupoId, NEW.temporada);
 END //
 
 
@@ -744,14 +869,12 @@ END //
 -- alevín infantil <=13 años< juvenil adulto
 CREATE OR REPLACE PROCEDURE grupoAdecuado(
     IN alumno INT,
-    IN grupoIdEntreno INT,
-    IN grupoIdEspera INT
+    IN g_Id INT
 )
 BEGIN
     DECLARE nacimiento DATE;
     DECLARE edad INT;
-    DECLARE categoriaEntreno VARCHAR(100);
-    DECLARE categoriaEspera VARCHAR(100);
+    DECLARE cat VARCHAR(100);
 
     SELECT fechaNacimiento
     INTO nacimiento
@@ -761,41 +884,30 @@ BEGIN
 
     SET edad = TIMESTAMPDIFF(YEAR, nacimiento, CURDATE());
 
-    IF grupoIdEntreno IS NOT NULL THEN
+    IF g_Id IS NOT NULL THEN
         SELECT categoria
-        INTO categoriaEntreno
+        INTO cat
         FROM Grupos
-        WHERE grupoId = grupoIdEntreno;
+        WHERE grupoId = g_Id;
 
-        IF (categoriaEntreno = 'Alevín-Infantil' AND edad > 13) OR (categoriaEntreno = 'Juvenil-Adulto' AND edad <= 13) THEN
-            SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'El grupo escogido no es para su edad.';
-        END IF;
-    END IF;
-
-    IF grupoIdEspera IS NOT NULL THEN
-        SELECT categoria
-        INTO categoriaEspera
-        FROM Grupos
-        WHERE grupoId = grupoIdEspera;
-
-        IF (categoriaEspera = 'Alevín-Infantil' AND edad > 13) OR (categoriaEspera = 'Juvenil-Adulto' AND edad <= 13) THEN
+        IF (cat = 'Alevín-Infantil' AND edad > 14) OR (cat = 'Juvenil-Adulto' AND edad <= 12) THEN
             SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'El grupo escogido no es para su edad.';
         END IF;
     END IF;
 END;
 
 CREATE OR REPLACE TRIGGER grupoAdecuadoCreacion
-BEFORE INSERT ON Alumnos
+BEFORE INSERT ON AlumnosGrupos
 FOR EACH ROW
 BEGIN
-    CALL grupoAdecuado(NEW.alumnoId,NEW.grupoIdEntreno,NEW.grupoIdEspera);
+    CALL grupoAdecuado(NEW.alumnoId, NEW.grupoId);
 END //
 
 CREATE OR REPLACE TRIGGER grupoAdecuadoActualizacion
-BEFORE UPDATE ON Alumnos
+BEFORE UPDATE ON AlumnosGrupos
 FOR EACH ROW
 BEGIN
-    CALL grupoAdecuado(NEW.alumnoId,NEW.grupoIdEntreno,NEW.grupoIdEspera);
+    CALL grupoAdecuado(NEW.alumnoId, NEW.grupoId);
 END //
 
 
@@ -888,8 +1000,6 @@ SELECT
     fechaNacimiento,
     dni,
     domicilioId,
-    grupoIdEntreno,
-    grupoIdEspera,
     razonInscripcion,
     clausulaPDD
 FROM Alumnos;
@@ -904,6 +1014,8 @@ FROM VistaGrados
     JOIN Personas ON Alumnos.personaId = Personas.personaId
 ORDER BY Personas.personaId, VistaGrados.fechaInicio ASC;
 
+
+-- OPCION VIEJA
 
 -- vista informe grupo
 -- asistencia media de la última temporada
@@ -927,7 +1039,7 @@ FROM asistenciasAlumnos
         SELECT grupoId, temporada, MAX(totalAsistencias) AS mayorAsistencia
         FROM asistenciasAlumnos
         GROUP BY grupoId, temporada
-    ) AS asistenciasMaximaGrupo
+    ) AS asistenciasMaximaGrupo -- máximo
         ON asistenciasAlumnos.grupoId = asistenciasMaximaGrupo.grupoId
             AND asistenciasAlumnos.temporada = asistenciasMaximaGrupo.temporada
             AND asistenciasAlumnos.totalAsistencias = asistenciasMaximaGrupo.mayorAsistencia
@@ -935,13 +1047,10 @@ FROM asistenciasAlumnos
         SELECT grupoId, temporada, AVG(totalAsistencias) AS asistenciaMedia
         FROM asistenciasAlumnos
         GROUP BY grupoId, temporada
-    ) AS asistenciaMediaPorGrupo
+    ) AS asistenciaMediaPorGrupo -- media
         ON asistenciasAlumnos.grupoId = asistenciaMediaPorGrupo.grupoId
             AND asistenciasAlumnos.temporada = asistenciaMediaPorGrupo.temporada
-WHERE asistenciasAlumnos.temporada = ( 
-    SELECT MAX(Sesiones.temporada) 
-    FROM Sesiones
-)
+WHERE asistenciasAlumnos.temporada = getTemporada(CURDATE())
 GROUP BY asistenciasAlumnos.grupoId, asistenciasAlumnos.temporada, asistenciasAlumnos.alumnoId;
 
 
@@ -963,19 +1072,109 @@ SELECT
 FROM Alumnos
     JOIN historialAscensos ON historialAscensos.personaId = Alumnos.personaId
     JOIN Observaciones ON Observaciones.alumnoId = Alumnos.alumnoId
-    JOIN ( -- sesiones asistidas
+    JOIN (
         SELECT Asistencias.alumnoId, COUNT(Asistencias.alumnoId) as totalAsistido, Sesiones.temporada
         FROM Asistencias
             JOIN Sesiones ON Sesiones.sesionId = Asistencias.sesionId
         WHERE Asistencias.alumnoPresente = TRUE
         GROUP BY Asistencias.alumnoId, Sesiones.temporada
-    ) AS sesionesAsistidas 
+    ) AS sesionesAsistidas -- sesiones asistidas 
         ON Alumnos.alumnoId = sesionesAsistidas.alumnoId
-    JOIN ( -- sesiones totales
+    JOIN (
         SELECT Asistencias.alumnoId, COUNT(Asistencias.alumnoId) as total, Sesiones.temporada
         FROM Asistencias
             JOIN Sesiones ON Sesiones.sesionId = Asistencias.sesionId
         GROUP BY Asistencias.alumnoId, Sesiones.temporada
-    ) AS sesionesTotales 
+    ) AS sesionesTotales -- sesiones totales
         ON Alumnos.alumnoId = sesionesTotales.alumnoId 
             AND sesionesAsistidas.temporada = sesionesTotales.temporada;
+-- mostrar sólo de un alumno con un select
+
+
+-- OPCION NUEVA
+
+-- sesiones totales
+CREATE OR REPLACE VIEW sesionesTotales AS
+SELECT 
+    Sesiones.grupoId, 
+    Temporadas.temporada, 
+    COUNT(Sesiones.sesionId) AS sesiones
+FROM Sesiones
+    JOIN Temporadas ON Temporadas.temporadaId = Sesiones.temporada
+GROUP BY Sesiones.grupoId, Temporadas.temporada;
+
+-- sesiones asistidas
+CREATE OR REPLACE VIEW sesionesAsistidas AS
+SELECT 
+    Asistencias.alumnoId, 
+    Sesiones.grupoId, 
+    Temporadas.temporada, 
+    COUNT(Asistencias.sesionId) AS sesiones
+FROM Asistencias
+    JOIN Sesiones ON Sesiones.sesionId = Asistencias.sesionId
+    JOIN Temporadas ON Temporadas.temporadaId = Sesiones.temporada
+WHERE Asistencias.alumnoPresente IS TRUE
+GROUP BY Sesiones.grupoId, Temporadas.temporada;
+
+-- informe individual por grupo
+CREATE OR REPLACE VIEW informesAlumnos AS
+SELECT 
+    AlumnosGrupos.alumnoId, 
+    AlumnosGrupos.grupoId, 
+    Temporadas.temporada, 
+    CASE 
+        WHEN COALESCE(sesionesTotales.sesiones, 0) = 0 THEN 0
+        ELSE sesionesAsistidas.sesiones*100/COALESCE(sesionesTotales.sesiones, 1)
+    END AS porcentajeAsistencia, 
+    GROUP_CONCAT(DISTINCT Grados.gradoCinturon ORDER BY Grados.fechaInicio DESC) AS cinturones, 
+    GROUP_CONCAT(DISTINCT Observaciones.argumento ORDER BY Observaciones.fecha DESC) AS observaciones
+FROM AlumnosGrupos
+    JOIN Temporadas ON Temporadas.temporadaId = AlumnosGrupos.temporadaId
+    JOIN sesionesAsistidas ON sesionesAsistidas.alumnoId = AlumnosGrupos.alumnoId
+    JOIN sesionesTotales ON sesionesTotales.grupoId = AlumnosGrupos.grupoId
+    LEFT JOIN Observaciones ON 
+        Observaciones.alumnoId = AlumnosGrupos.alumnoId
+        AND
+        Temporadas.temporada = getTemporada(Observaciones.fecha)
+    LEFT JOIN Grados ON 
+        Grados.alumnoId = AlumnosGrupos.alumnoId
+        AND
+        (
+            Temporadas.temporada = getTemporada(Grados.fechaInicio)
+            OR
+            (
+                Temporadas.temporada > getTemporada(Grados.fechaInicio)
+                AND
+                Grados.fechaFin IS NULL
+            )
+        )
+WHERE sesionesAsistidas.grupoId = sesionesTotales.grupoId
+GROUP BY AlumnosGrupos.alumnoId, AlumnosGrupos.grupoId, Temporadas.temporada;
+
+-- informe grupo
+CREATE OR REPLACE VIEW informesGrupos AS
+SELECT
+    informesAlumnos.grupoId, 
+    informesAlumnos.temporada, 
+    AVG(informesAlumnos.porcentajeAsistencia) AS asistenciaMedia, 
+    MAX(informesAlumnos.porcentajeAsistencia) AS asistenciaMáxima,
+    GROUP_CONCAT(DISTINCT maximos.alumnoId SEPARATOR ', ') AS alumnosMaximos
+FROM informesAlumnos
+    LEFT JOIN (
+    SELECT 
+        ia1.grupoId,
+        ia1.temporada,
+        ia1.alumnoId,
+        ia1.porcentajeAsistencia
+    FROM informesAlumnos ia1
+    WHERE ia1.porcentajeAsistencia = (
+        SELECT MAX(ia2.porcentajeAsistencia)
+        FROM informesAlumnos ia2
+        WHERE ia2.grupoId = ia1.grupoId
+          AND ia2.temporada = ia1.temporada
+        )
+    ) AS maximos ON 
+        maximos.grupoId = informesAlumnos.grupoId
+        AND 
+        maximos.temporada = informesAlumnos.temporada
+GROUP BY informesAlumnos.grupoId, informesAlumnos.temporada;

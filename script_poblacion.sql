@@ -1,149 +1,311 @@
--- Personas:
--- P1:
-INSERT INTO Personas (nombre, apellidos, telefono, correo)
-VALUES ('Alumno1', 'Mayor edad correcto', 000000001, 'a1@gmail.com');
--- P2:
-INSERT INTO Personas (nombre, apellidos, telefono, correo)
-VALUES ('Alumno2', 'Mayor edad sin telefono', 111111111, 'a2@gmail.com');
--- P3:
-INSERT INTO Personas (nombre, apellidos, telefono, correo)
-VALUES ('Alumno3', 'Menor edad sin correo', 000000003, NULL);
--- P4:
-INSERT INTO Personas (nombre, apellidos, telefono, correo)
-VALUES ('Alumno4', 'Menor edad sin telefono y correo', NULL, NULL);
--- P5:
-INSERT INTO Personas (nombre, apellidos, telefono, correo)
-VALUES ('Sensei1', 'Correcto', 999999999, 's1@gmail.com');
--- P6:
-INSERT INTO Personas (nombre, apellidos, telefono, correo)
-VALUES ('Tutor legal1', 'Sin telefono', 999999998, 't2@gmail.com');
--- P7:
-INSERT INTO Personas (nombre, apellidos, telefono, correo)
-VALUES ('Tutor legal2', 'Correcto', 999999997, 't1@gmail.com');
+CALL insertarDomicilio( -- d1
+    1,
+    'Direccion alumno 1', 
+    'Olivares', 
+    41804
+);
 
+CALL insertarTutorLegalYPersona(
+    6,                          -- p6
+    1,                          -- t1
+    'Tutor legal1', 
+    'Sin telefono',
+    NULL, 
+    'correo@gmail.com',
+    'altcorreo@gmail.com',
+    'Madre'
+);
 
--- Domicilio:
--- Domicilio 1 / A1:
-INSERT INTO Domicilios (direccion, municipio, cp)
-VALUES ('Direccion alumno 1', 'Olivares', 41804);
--- Domicilio 2 / A2 Y A3:
-INSERT INTO Domicilios (direccion, municipio, cp)
-VALUES ('Direccion alumno 2 y 3', 'La Rinconada', 41300);
--- Domicilio 3 / A4:
-INSERT INTO Domicilios (direccion, municipio, cp)
-VALUES ('Direccion alumno 4', 'Palomares del Rio', 41928);
+CALL insertarTutorLegalYPersona(
+    7,                          -- p7
+    2,                          -- t2
+    'Tutor legal2', 
+    'Correcto',
+    123456789, 
+    'correo@gmail.com',
+    NULL,
+    'Padre'
+);
 
+CALL insertarAlumnoYPersona(
+    1,                          -- p1
+    1,                          -- a1
+    'Alumno1', 
+    'Mayor edad correcto', 
+    '00000001A',
+    'correo@gmail.com',
+    NULL,
+    '1998-12-22',
+    NULL,
+    '12345678A',
+    TRUE,
+    1,                          -- d1
+    NULL
+);
 
--- Tutores Legales:
--- Tutor legal 1 / Persona 6: Sin teléfono (no la metemos como madre a2 pq es mayor edad)
-INSERT INTO TutoresLegales (correoAlternativo, parentesco, personaId)
-VALUES ('altm2&3@gmail.com', 'Madre', 6);
--- Tutor legal 2 / Persona 7: Datos completos
-INSERT INTO TutoresLegales (correoAlternativo, parentesco, personaId)
-VALUES (NULL, 'Padre', 7);
+CALL insertarDomicilio( -- d2
+    2,
+    'Direccion alumno 2 y 3', 
+    'La Rinconada', 
+    41300
+);
 
+CALL insertarAlumnoYPersona(
+    2,                          -- p2
+    2,                          -- a2
+    'Alumno2', 
+    'Mayor edad sin telefono',
+    '00000002A',
+    'correo@gmail.com',
+    NULL,
+    '2008-10-22',
+    NULL,
+    '12345678A',
+    TRUE,
+    2,                          -- d2
+    2                           -- t2
+);
 
--- Grupos:
--- Grupos validos: 
--- G1_Disponible: Grupo con espacio disponible.  
-INSERT INTO Grupos(nombre, ubicacion, categoria, limiteAlumnos, precioMes)
-VALUES ('Grupo A', 'Sevilla', 'Juvenil-Adulto', 15, 60);
--- G2_Completo: Grupo lleno.  
-INSERT INTO Grupos(nombre, ubicacion, categoria, limiteAlumnos, precioMes)
-VALUES ('Grupo B', 'Sevilla', 'Alevín-Infantil', 2, 60);
+CALL insertarInfoSanitaria(
+    1,
+    'Asmatico',
+    2                           -- a2
+);
 
+CALL insertarAlumnoYPersona(
+    3,                          -- p3
+    3,                          -- a3
+    'Alumno3', 
+    'Menor edad sin correo', 
+    '00000003A',
+    NULL,
+    NULL,
+    '2008-10-22',
+    NULL,
+    '12345678A',
+    TRUE,
+    2,                          -- d2
+    2                           -- t2
+);
 
--- Alumnos:
--- Alumno 1 / Persona 1: Mayor de edad con datos completos G1
-INSERT INTO Alumnos (razonInscripcion, fechaNacimiento, codigoFederativo, dni, clausulaPDD, personaId, domicilioId, tutorId, grupoIdEntreno, grupoIdEspera)
-VALUES ('Motivo Personal', '1998-12-22', 00001, '00000001A', TRUE, 1, 1, NULL, 1, NULL);
--- Alumno 2 / Persona 2: Menor de edad sin teléfono G1 hijo t1
-INSERT INTO Alumnos (razonInscripcion, fechaNacimiento, codigoFederativo, dni, clausulaPDD, personaId, domicilioId, tutorId, grupoIdEntreno, grupoIdEspera)
-VALUES ('Motivo Personal', '2008-10-22', 00002, '00000002A', TRUE, 2, 2, 2, 1, NULL);
--- Alumno 3 / Persona 3: Menor de edad sin correo G2 hijo t1
-INSERT INTO Alumnos (razonInscripcion, fechaNacimiento, codigoFederativo, dni, clausulaPDD, personaId, domicilioId, tutorId, grupoIdEntreno, grupoIdEspera)
-VALUES ('Motivo Personal', '2008-10-22', 00003, '00000003A', TRUE, 3, 2, 2, 2, NULL);
--- Alumno 4 / Persona 4: Alumno completo menor edad sin telefono sin correo G2 hijo t2 
-INSERT INTO Alumnos (razonInscripcion, fechaNacimiento, codigoFederativo, dni, clausulaPDD, personaId, domicilioId, tutorId, grupoIdEntreno, grupoIdEspera)
-VALUES ('Motivo Personal', '2008-10-22', 00004, '00000004A', TRUE, 4, 3, 2, 2, NULL);
+CALL insertarDomicilio( -- d3
+    3,
+    'Direccion alumno 4', 
+    'Palomares del Rio',
+    41928
+);
 
+CALL insertarAlumnoYPersona(
+    4,                          -- p4
+    4,                          -- a4
+    'Alumno4', 
+    'Menor edad sin telefono y correo', 
+    '00000004A',
+    NULL,
+    NULL,
+    '2008-10-22',
+    NULL,
+    '12345678A',
+    TRUE,
+    3,                          -- d3
+    2                           -- t2
+);
 
--- Grados:
--- Grado_Alumno1: Grado con fecha de licencia.  
-INSERT INTO Grados(gradoCinturon, fechaInicio, fechaFin, fechaLicencia, alumnoId)
-VALUES ('Blanco', '2023-01-01', '2024-02-01', '2024-01-01', 1);
--- Grado2_SinLicencia: Grado sin fecha de licencia.  
-INSERT INTO Grados(gradoCinturon, fechaInicio, fechaFin, fechaLicencia, alumnoId)
-VALUES ('Blanco', '2024-01-2', NULL, NULL, 2);
--- Grado2_SinLicencia: Grado sin fecha de licencia.  
-INSERT INTO Grados(gradoCinturon, fechaInicio, fechaFin, fechaLicencia, alumnoId)
-VALUES ('Blanco', '2024-01-3', NULL, NULL, 3);
--- Grado2_SinLicencia: Grado sin fecha de licencia.  
-INSERT INTO Grados(gradoCinturon, fechaInicio, fechaFin, fechaLicencia, alumnoId)
-VALUES ('Blanco', '2024-01-4', NULL, NULL, 4);
+CALL insertarSenseiYPersona(
+    5,                          -- p5
+    1,                          -- sens1
+    'Sensei1', 
+    'Correcto',
+    123456789, 
+    'correo@gmail.com'
+);
 
+CALL insertarGrupo(
+    1,                          -- g1
+    'Grupo disponible', 
+    'Sevilla', 
+    'Juvenil-Adulto', 
+    15,
+    60
+);
 
--- Senseis:
--- Sensei 1 / Persona 5: Senseis correctos:
-INSERT INTO Senseis(personaId)
-VALUES (4);
+CALL insertarGrupo(
+    2,                          -- g2
+    'Grupo completo', 
+    'Sevilla', 
+    'Alevín-Infantil', 
+    2,
+    60
+);
 
+CALL insertarTemporada( -- temp 1
+    1,
+    '2024-2025'
+);
 
--- Sesiones:
--- Sesion1_Correcta G1 1
-INSERT INTO Sesiones(fechaHora, temporada, grupoId)
-VALUES ('2024-12-05 10:00:00', '2024/25', 1);
--- Sesion2_Correcta G2 1
-INSERT INTO Sesiones(fechaHora, temporada, grupoId)
-VALUES ('2024-12-06 12:00:00', '2024/25', 2);
--- Sesion3_Correcta G2 2
-INSERT INTO Sesiones(fechaHora, temporada, grupoId)
-VALUES ('2024-12-07 10:00:00', '2024/25', 2);
+CALL insertarAlumnosGrupos(
+    NULL,
+    1,                          -- a1
+    1,                          -- g1
+    FALSE,
+    1                          -- temp 1 (24-25)
+);
 
+CALL insertarAlumnosGrupos(
+    NULL,
+    2,                          -- a2
+    1,                          -- g1
+    FALSE,
+    1                          -- temp 1 (24-25)
+);
 
--- Asistencias:
--- Asistencias A1:
-INSERT INTO Asistencias(alumnoPresente, alumnoId, sesionId)
-VALUES (TRUE, 1, 1);
--- Asistencias A2:
-INSERT INTO Asistencias(alumnoPresente, alumnoId, sesionId)
-VALUES (TRUE, 2, 1);
--- Asistencias A3:
-INSERT INTO Asistencias(alumnoPresente, alumnoId, sesionId)
-VALUES (TRUE, 3, 2);
--- Asistencias A4
-INSERT INTO Asistencias(alumnoPresente, alumnoId, sesionId)
-VALUES (TRUE, 3, 3);
--- Asistencias A5:
-INSERT INTO Asistencias(alumnoPresente, alumnoId, sesionId)
-VALUES (TRUE, 4, 2);
--- Asistencias A6
-INSERT INTO Asistencias(alumnoPresente, alumnoId, sesionId)
-VALUES (TRUE, 4, 3);
+CALL insertarAlumnosGrupos(
+    NULL,
+    3,                          -- a3
+    2,                          -- g2
+    FALSE,
+    1                          -- temp 1 (24-25)
+);
 
+CALL insertarAlumnosGrupos(
+    NULL,
+    4,                          -- a4
+    2,                          -- g2
+    FALSE,
+    1                          -- temp 1 (24-25)
+);
 
--- Observaciones:
--- Observacion A1, S1, Primera Sesion
-INSERT INTO Observaciones(fecha, argumento, alumnoId, senseiId)
-VALUES ('2024-12-05', 'Se le da bien', 1, 1);
+CALL insertarGrado(
+    NULL,
+    'Blanco',
+    '2023-01-01',
+    '2024-01-01',
+    '2024-02-01',
+    1                          -- a1
+);
 
+CALL insertarGrado(
+    NULL,
+    'Blanco',
+    '2024-01-2',
+    NULL,
+    NULL,
+    2                          -- a2
+);
 
--- Anuncios correctos:
--- Anuncio1_Publicado: Anuncio publicado.
-INSERT INTO Anuncios(asunto, fechaHora, descripcion, senseiId)
-VALUES ('Anuncio publicado', CURDATE(), 'Descripcion 1', 1);
--- Anuncio2_SinPublicar: Anuncio sin publicar con fecha.
-INSERT INTO Anuncios(asunto, fechaHora, descripcion, senseiId)
-VALUES ('Anuncio sin publicar con fecha', '2024-12-01', 'Descripcion 2', 1);
+CALL insertarGrado(
+    NULL,
+    'Blanco',
+    '2024-01-3',
+    NULL,
+    NULL,
+    3                          -- a3
+);
 
+CALL insertarGrado(
+    NULL,
+    'Blanco',
+    '2024-01-4',
+    NULL,
+    NULL,
+    4                          -- a4
+);
 
--- Info sanitaria:
--- Info sanitaria A2:
-INSERT INTO InfosSanitarias(argumento, alumnoId)
-VALUES ('Asmatico', 2);
+CALL insertarSesion(
+    1,                         -- s1
+    '2024-12-05 10:00:00',
+    60,
+    1,                         -- temp 1 (24-25)
+    1                          -- g1
+);
 
+CALL insertarSesion(
+    2,                         -- s2
+    '2024-12-06 10:00:00',
+    80,
+    1,                         -- temp 1 (24-25)
+    2                          -- g2
+);
 
--- Pagos:
--- Pago1_Individual A4: Pago individual.  
-INSERT INTO Pagos(cantidad, fecha, metodo, financiamiento, alumnoId)
-VALUES (60.50, '2023-01-01', 'Bizum', 'Mensual', 1);
+CALL insertarSesion(
+    3,                         -- s3
+    '2024-12-06 12:00:00',
+    80,
+    1,                         -- temp 1 (24-25)
+    2                          -- g2
+);
+
+CALL insertarAsistencia(
+    NULL,
+    TRUE,
+    1,                         -- a1
+    1                          -- s1
+);
+
+CALL insertarAsistencia(
+    NULL,
+    TRUE,
+    2,                         -- a2
+    1                          -- s1
+);
+
+CALL insertarAsistencia(
+    NULL,
+    TRUE,
+    3,                         -- a3
+    2                          -- s2
+);
+
+CALL insertarAsistencia(
+    NULL,
+    TRUE,
+    3,                         -- a3
+    3                          -- s3
+);
+
+CALL insertarAsistencia(
+    NULL,
+    TRUE,
+    4,                         -- a4
+    2                          -- s2
+);
+
+CALL insertarAsistencia(
+    NULL,
+    TRUE,
+    4,                         -- a4
+    3                          -- s3
+);
+
+CALL insertarObservacion(
+    NULL,
+    '2024-12-05',
+    'Se le da bien', 
+    1,                         -- a1
+    1                          -- sens1
+);
+
+CALL insertarAnuncio(
+    NULL,
+    'Anuncio publicado',
+    CURDATE(), 
+    'Descripcion 1', 
+    1                          -- sens1
+);
+
+CALL insertarAnuncio(
+    NULL,
+    'Anuncio sin publicar con fecha', 
+    '2024-12-01', 
+    'Descripcion 2', 
+    1                          -- sens1
+);
+
+CALL insertarPago(
+    NULL,
+    60.50, 
+    '2023-01-01',
+    'Bizum', 
+    'Mensual', 
+    1                          -- a1
+);

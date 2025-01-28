@@ -376,12 +376,6 @@ El sistema debe permitir la eliminación de sesiones en caso de eventos imprevis
 - PRUEBAS DE ACEPTACIÓN:
     - intentar eliminar: CORRECTO
 
-#### R.N.04.5 Sesiones no coincidentes
-No puede haber dos sesiones que coincidan en fecha, hora y ubicación.
-
-- PRUEBAS DE ACEPTACIÓN:
-    - sesión duplicada: FALLO
-
 ---
 
 ## 6. Mapa de historias de usuario
@@ -449,7 +443,6 @@ No puede haber dos sesiones que coincidan en fecha, hora y ubicación.
     - [R.N.04.1 Creación de Sesiones](#rn041-creación-de-sesiones)
     - [R.N.04.2 Edición de Sesiones](#rn042-edición-de-sesiones)
     - [R.N.04.4 Eliminación de Sesiones](#rn044-eliminación-de-sesiones)
-    - [R.N.04.5 Sesiones no coincidentes](#rn045-sesiones-no-coincidentes)
   - [R.I.04.2 Información de Asistencia](#ri042-información-de-asistencia)
     - [R.N.04.3 Registro de Asistencia](#rn043-registro-de-asistencia)
 
@@ -467,9 +460,9 @@ No puede haber dos sesiones que coincidan en fecha, hora y ubicación.
 - Grupos (!grupoId, nombre, limiteAlumnos, categoria, ubicacion, precioMes)
 - Alumnos (!alumnoId, razonInscripcion, fechaNacimiento, codigoFederativo, dni, clausulaPDD, personaId @Personas, domicilioId @Domicilios, tutorId @TutoresLegales)
 - AlumnosGrupos (!alumnosGruposId, alumnoId @Alumnos, grupoId @Grupos, esLista, temporada @Temporadas)
-- Grados (!gradoId, gradoCinturon, fechaInicio, fechaFin,  fechaLicencia, alumnoId @Alumnos)
+- Grados (!gradoId, gradoCinturon, fechaInicio, fechaFin, fechaLicencia, alumnoId @Alumnos)
 - Senseis (!senseiId, personaId @Personas)
-- Sesiones (!sesionId, fechaHora, temporada @Temporadas, grupoId @Grupos)
+- Sesiones (!sesionId, fechaHora, duracionMin, temporada @Temporadas, grupoId @Grupos)
 - Asistencias (!asistenciaId, alumnoPresente, alumnoId @Alumnos, sesionId @Sesiones)
 - Observaciones (!observacionId, fecha, argumento, alumnoId @Alumnos, senseiId @Senseis)
 - Anuncios (!anuncioId, asunto, fechaHora, descripcion, seseiId @Senseis)
